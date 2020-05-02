@@ -1,0 +1,181 @@
+DEBUG 2020-04-24 10:26:35.130 UTC: 	 Running on: Linux lxplus788.cern.ch 3.10.0-1062.18.1.el7.x86_64 #1 SMP Tue Mar 17 23:49:17 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2020-04-24 10:26:35.146 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2020-04-24 10:26:35.147 UTC: 	 Executing command: 'submit'
+DEBUG 2020-04-24 10:26:35.148 UTC: 	 Found CRAB cache file /afs/cern.ch/user/c/castilla/.crab3
+DEBUG 2020-04-24 10:26:35.154 UTC: 	 Checking credentials
+DEBUG 2020-04-24 10:26:35.155 UTC: 	 Found proxy file /tmp/x509up_u9405
+DEBUG 2020-04-24 10:26:35.155 UTC: 	 Getting proxy life time left
+DEBUG 2020-04-24 10:26:35.760 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -timeleft
+ output : 14566
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-24 10:26:36.366 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -actimeleft
+ output : 14565
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-24 10:26:36.366 UTC: 	 Proxy lifetime 14566 secs is different from voms extension lifetime 14565 secs for proxy: /tmp/x509up_u9405
+DEBUG 2020-04-24 10:26:36.366 UTC: 	 Proxy valid for 04:02:45 hours
+INFO 2020-04-24 10:26:36.366 UTC: 	 Will use CRAB configuration file crabConfig.py
+DEBUG 2020-04-24 10:26:36.366 UTC: 	 Loading CRAB configuration file.
+DEBUG 2020-04-24 10:26:36.368 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2020-04-24 10:26:36.369 UTC: 	 Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_Bplus_parkedData_20-04-22' already exists 
+Please change the requestName in the config file
+ERROR 2020-04-24 10:26:36.369 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/submit.py", line 35, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/SubCommand.py", line 324, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/ClientUtilities.py", line 418, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_Bplus_parkedData_20-04-22' already exists 
+Please change the requestName in the config file
+DEBUG 2020-04-25 14:08:44.611 UTC: 	 Running on: Linux lxplus7129.cern.ch 3.10.0-1062.18.1.el7.x86_64 #1 SMP Tue Mar 17 23:49:17 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2020-04-25 14:08:44.626 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2020-04-25 14:08:44.626 UTC: 	 Executing command: 'submit'
+DEBUG 2020-04-25 14:08:44.627 UTC: 	 Found CRAB cache file /afs/cern.ch/user/c/castilla/.crab3
+DEBUG 2020-04-25 14:08:44.635 UTC: 	 Checking credentials
+DEBUG 2020-04-25 14:08:44.637 UTC: 	 Found proxy file /tmp/x509up_u9405
+DEBUG 2020-04-25 14:08:44.637 UTC: 	 Getting proxy life time left
+DEBUG 2020-04-25 14:08:45.241 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -timeleft
+ output : 41587
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-25 14:08:45.747 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -actimeleft
+ output : 41587
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-25 14:08:45.747 UTC: 	 Proxy valid for 11:33:07 hours
+INFO 2020-04-25 14:08:45.747 UTC: 	 Will use CRAB configuration file crabConfig.py
+DEBUG 2020-04-25 14:08:45.747 UTC: 	 Loading CRAB configuration file.
+DEBUG 2020-04-25 14:08:45.778 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2020-04-25 14:08:45.779 UTC: 	 Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_Bplus_parkedData_20-04-22' already exists 
+Please change the requestName in the config file
+ERROR 2020-04-25 14:08:45.779 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/submit.py", line 35, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/SubCommand.py", line 324, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/ClientUtilities.py", line 418, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_Bplus_parkedData_20-04-22' already exists 
+Please change the requestName in the config file
+DEBUG 2020-04-25 14:23:53.359 UTC: 	 Running on: Linux lxplus7129.cern.ch 3.10.0-1062.18.1.el7.x86_64 #1 SMP Tue Mar 17 23:49:17 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2020-04-25 14:23:53.370 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2020-04-25 14:23:53.370 UTC: 	 Executing command: 'submit'
+DEBUG 2020-04-25 14:23:53.371 UTC: 	 Found CRAB cache file /afs/cern.ch/user/c/castilla/.crab3
+DEBUG 2020-04-25 14:23:53.376 UTC: 	 Checking credentials
+DEBUG 2020-04-25 14:23:53.376 UTC: 	 Found proxy file /tmp/x509up_u9405
+DEBUG 2020-04-25 14:23:53.376 UTC: 	 Getting proxy life time left
+DEBUG 2020-04-25 14:23:53.981 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -timeleft
+ output : 40679
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-25 14:23:54.485 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -actimeleft
+ output : 40678
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-25 14:23:54.485 UTC: 	 Proxy lifetime 40679 secs is different from voms extension lifetime 40678 secs for proxy: /tmp/x509up_u9405
+DEBUG 2020-04-25 14:23:54.485 UTC: 	 Proxy valid for 11:17:58 hours
+INFO 2020-04-25 14:23:54.485 UTC: 	 Will use CRAB configuration file crabConfig.py
+DEBUG 2020-04-25 14:23:54.486 UTC: 	 Loading CRAB configuration file.
+DEBUG 2020-04-25 14:23:54.487 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2020-04-25 14:23:54.487 UTC: 	 Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_Bplus_parkedData_20-04-25' already exists 
+Please change the requestName in the config file
+ERROR 2020-04-25 14:23:54.487 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/submit.py", line 35, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/SubCommand.py", line 324, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/ClientUtilities.py", line 418, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_Bplus_parkedData_20-04-25' already exists 
+Please change the requestName in the config file
+DEBUG 2020-04-25 17:50:27.339 UTC: 	 Running on: Linux lxplus775.cern.ch 3.10.0-1062.18.1.el7.x86_64 #1 SMP Tue Mar 17 23:49:17 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2020-04-25 17:50:27.354 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2020-04-25 17:50:27.354 UTC: 	 Executing command: 'submit'
+DEBUG 2020-04-25 17:50:27.354 UTC: 	 Found CRAB cache file /afs/cern.ch/user/c/castilla/.crab3
+DEBUG 2020-04-25 17:50:27.361 UTC: 	 Checking credentials
+DEBUG 2020-04-25 17:50:27.362 UTC: 	 Found proxy file /tmp/x509up_u9405
+DEBUG 2020-04-25 17:50:27.362 UTC: 	 Getting proxy life time left
+DEBUG 2020-04-25 17:50:27.966 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -timeleft
+ output : 42805
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-25 17:50:28.571 UTC: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u9405 -actimeleft
+ output : 42804
+
+ error: 
+ retcode : 0
+DEBUG 2020-04-25 17:50:28.571 UTC: 	 Proxy lifetime 42805 secs is different from voms extension lifetime 42804 secs for proxy: /tmp/x509up_u9405
+DEBUG 2020-04-25 17:50:28.571 UTC: 	 Proxy valid for 11:53:24 hours
+INFO 2020-04-25 17:50:28.571 UTC: 	 Will use CRAB configuration file crabConfig2.py
+DEBUG 2020-04-25 17:50:28.571 UTC: 	 Loading CRAB configuration file.
+DEBUG 2020-04-25 17:50:28.574 UTC: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+ERROR 2020-04-25 17:50:28.575 UTC: 	 Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_SeveralBplus_parkedData_20-04-25' already exists 
+Please change the requestName in the config file
+ERROR 2020-04-25 17:50:28.575 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/submit.py", line 35, in __init__
+    SubCommand.__init__(self, logger, cmdargs, disable_interspersed_args=True)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/SubCommand.py", line 324, in __init__
+    getattr(self.configuration.General, 'requestName', None))
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/ClientUtilities.py", line 418, in createWorkArea
+    raise ConfigException("Working area '%s' already exists \nPlease change the requestName in the config file" % fullpath)
+ConfigException: Working area '/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/crab_projects/crab_SeveralBplus_parkedData_20-04-25' already exists 
+Please change the requestName in the config file
+DEBUG 2020-04-25 17:53:06.658 UTC: 	 Running on: Linux lxplus775.cern.ch 3.10.0-1062.18.1.el7.x86_64 #1 SMP Tue Mar 17 23:49:17 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2020-04-25 17:53:06.674 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2020-04-25 17:53:06.674 UTC: 	 Executing command: 'status'
+DEBUG 2020-04-25 17:53:06.675 UTC: 	 Found CRAB cache file /afs/cern.ch/user/c/castilla/.crab3
+DEBUG 2020-04-26 03:34:00.656 UTC: 	 Running on: Linux lxplus704.cern.ch 3.10.0-1062.18.1.el7.x86_64 #1 SMP Tue Mar 17 23:49:17 UTC 2020 x86_64 x86_64 x86_64 GNU/Linux - CentOS Linux 7 (Core)
+DEBUG 2020-04-26 03:34:00.678 UTC: 	 OpenSSl version: OpenSSL 1.0.2k-fips  26 Jan 2017 (Library: OpenSSL 1.0.2d-fips 9 Jul 2015)
+DEBUG 2020-04-26 03:34:00.679 UTC: 	 Executing command: 'status'
+DEBUG 2020-04-26 03:34:00.680 UTC: 	 Found CRAB cache file /afs/cern.ch/user/c/castilla/.crab3
+ERROR 2020-04-26 03:34:00.683 UTC: 	 Error: crab_projects/crab_Bplus_parkedData_20-04-2a is not a valid CRAB project directory.
+ERROR 2020-04-26 03:34:00.683 UTC: 	 Caught ClientException exception
+Traceback (most recent call last):
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 165, in <module>
+    client()
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/bin/crab", line 150, in __call__
+    self.cmd = sub_cmd(self.logger, args[1:])
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/status.py", line 41, in __init__
+    SubCommand.__init__(self, logger, cmdargs)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/SubCommand.py", line 277, in __init__
+    SubCommand.validateOptions(self)
+  File "/cvmfs/cms.cern.ch/share/cms/crab-prod/3.3.2003/lib/CRABClient/Commands/SubCommand.py", line 604, in validateOptions
+    raise ConfigurationException(msg)
+ConfigurationException: [91mError[0m: crab_projects/crab_Bplus_parkedData_20-04-2a is not a valid CRAB project directory.
