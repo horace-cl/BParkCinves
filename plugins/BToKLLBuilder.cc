@@ -102,6 +102,7 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
   std::unique_ptr<pat::CompositeCandidateCollection> ret_val(new pat::CompositeCandidateCollection());
   
   for(size_t k_idx = 0; k_idx < kaons->size(); ++k_idx) {
+   
     edm::Ptr<pat::CompositeCandidate> k_ptr(kaons, k_idx);
     if( !k_selection_(*k_ptr) ) continue;
     
@@ -113,6 +114,10 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       );
 
     for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
+
+
+
+
       edm::Ptr<pat::CompositeCandidate> ll_prt(dileptons, ll_idx);
       edm::Ptr<reco::Candidate> l1_ptr = ll_prt->userCand("l1");
       edm::Ptr<reco::Candidate> l2_ptr = ll_prt->userCand("l2");

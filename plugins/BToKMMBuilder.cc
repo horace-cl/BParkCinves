@@ -25,6 +25,8 @@
 #include <algorithm>
 #include "KinVtxFitter.h"
 #include <Math/VectorUtil.h>
+
+#include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicVertex.h"
  
 class BToKMMBuilder : public edm::global::EDProducer<> {
 
@@ -135,6 +137,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
   pvTable->addColumn<float>("vx",vx,"vx in cm",nanoaod::FlatTable::FloatColumn,10);
   pvTable->addColumn<float>("vy",vy,"vy in cm",nanoaod::FlatTable::FloatColumn,10);
   pvTable->addColumn<float>("vz",vz,"vz in cm",nanoaod::FlatTable::FloatColumn,10);
+  //std::cout << "Pasamos el almacenamiento delos PVs\n\n" ;
   //HCL
 
 
@@ -153,12 +156,17 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
   std::vector<int> used_lep1_id, used_lep2_id, used_trk_id;
 
- 
+  std::cout << "Kaons Size:  "<< kaons->size() << std::endl;
+  std::cout << "Dileptons Size:  "<< dileptons->size() << std::endl;
   // output
   std::unique_ptr<pat::CompositeCandidateCollection> ret_val(new pat::CompositeCandidateCollection());
-  
+
   for(size_t k_idx = 0; k_idx < kaons->size(); ++k_idx) {
     edm::Ptr<pat::CompositeCandidate> k_ptr(kaons, k_idx);
+    
+    std::cout << "K id : " << k_idx << std::endl;
+    
+   // try {
     if( !k_selection_(*k_ptr) ) continue;
     
     math::PtEtaPhiMLorentzVector k_p4(
@@ -169,6 +177,9 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       );
 
     for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
+      
+      std::cout << "Dimu id : " << ll_idx << std::endl;
+
       edm::Ptr<pat::CompositeCandidate> ll_prt(dileptons, ll_idx);
       edm::Ptr<reco::Candidate> l1_ptr = ll_prt->userCand("l1");
       edm::Ptr<reco::Candidate> l2_ptr = ll_prt->userCand("l2");
@@ -213,11 +224,19 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       
       if( !pre_vtx_selection_(cand) ) continue;
     
+      //HCL
+      //std::cout << "BBB PreVertex Fitting    ";
+    
       KinVtxFitter fitter(
         {leptons_ttracks->at(l1_idx), leptons_ttracks->at(l2_idx), kaons_ttracks->at(k_idx)},
         {l1_ptr->mass(), l2_ptr->mass(), K_MASS},
         {LEP_SIGMA, LEP_SIGMA, K_SIGMA} //some small sigma for the lepton mass
         );
+      //HCL Se puede extraer el Vertex???
+      //std::cout << "BBB PostVertex Fitting    \n";
+      // RefCountedKinematicVertex myVertex = fitter.fitted_vtx_();
+      // std::cout << myVertex->vertexIsValid << "\n\n";
+
       if(!fitter.success()) continue; // hardcoded, but do we need otherwise?
       cand.setVertex( 
         reco::Candidate::Point( 
@@ -226,7 +245,8 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
           fitter.fitted_vtx().z()
           )  
         );
-
+      
+     // std::cout << "----->  SUCCESS!!!\n";
       used_lep1_id.emplace_back(l1_idx);
       used_lep2_id.emplace_back(l2_idx);
       used_trk_id.emplace_back(k_idx);
@@ -261,17 +281,23 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       auto lxy = l_xy(fitter, *beamspot);
       cand.addUserFloat("l_xy", lxy.value());
       cand.addUserFloat("l_xy_unc", lxy.error());
+
+      //std::cout << "Comienza matriz errores Vertex\n";
+
       cand.addUserFloat("vtx_x", cand.vx());
       cand.addUserFloat("vtx_y", cand.vy());
       cand.addUserFloat("vtx_z", cand.vz());
+
       cand.addUserFloat("vtx_ex" , sqrt(fitter.fitted_vtx_uncertainty().cxx()));
       cand.addUserFloat("vtx_ey" , sqrt(fitter.fitted_vtx_uncertainty().cyy()));
       cand.addUserFloat("vtx_ez" , sqrt(fitter.fitted_vtx_uncertainty().czz()));
-      // cand.addUserFloat("vtx_exy", sqrt(fitter.fitted_vtx_uncertainty().cxy()));
-      cand.addUserFloat("vtx_eyx", sqrt(fitter.fitted_vtx_uncertainty().cyx()));
-      cand.addUserFloat("vtx_ezx", sqrt(fitter.fitted_vtx_uncertainty().czx()));
-      cand.addUserFloat("vtx_ezy", sqrt(fitter.fitted_vtx_uncertainty().czy()));
-
+        // cand.addUserFloat("vtx_exy", sqrt(fitter.fitted_vtx_uncertainty().cxy()));
+        cand.addUserFloat("vtx_eyx", sqrt(fitter.fitted_vtx_uncertainty().cyx()));
+        cand.addUserFloat("vtx_ezx", sqrt(fitter.fitted_vtx_uncertainty().czx()));
+        cand.addUserFloat("vtx_ezy", sqrt(fitter.fitted_vtx_uncertainty().czy()));
+        cand.addUserFloat("vtx_eyx", -1.0);
+        cand.addUserFloat("vtx_ezx", -1.0);
+        cand.addUserFloat("vtx_ezy", -1.0);
       cand.addUserFloat("fitted_l1_pt" , fitter.daughter_p4(0).pt()); 
       cand.addUserFloat("fitted_l1_eta", fitter.daughter_p4(0).eta());
       cand.addUserFloat("fitted_l1_phi", fitter.daughter_p4(0).phi());
@@ -407,9 +433,15 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
       ret_val->push_back(cand);
     } // for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
+  
+ //   }
+   // catch(...){
+     // std::cout << "Error!!!\n  "; 
+    //}  
+
   } // for(size_t k_idx = 0; k_idx < kaons->size(); ++k_idx)
 
-  
+
  
   for (auto & cand: *ret_val){
     cand.addUserInt("n_k_used", std::count(used_trk_id.begin(),used_trk_id.end(),cand.userInt("k_idx")));

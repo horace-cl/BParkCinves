@@ -85,12 +85,13 @@ void DiLeptonBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
       lepton_pair.addUserCand("l2", l2_ptr );
 
       if( !pre_vtx_selection_(lepton_pair) ) continue; // before making the SV, cut on the info we have
-
+      std::cout << "Pre fitter DILEPTON   ";
       KinVtxFitter fitter(
         {ttracks->at(l1_idx), ttracks->at(l2_idx)},
         {l1_ptr->mass(), l2_ptr->mass()},
         {LEP_SIGMA, LEP_SIGMA} //some small sigma for the particle mass
         );
+      std::cout << "Post fitter DILEPTON   \n";
       lepton_pair.addUserFloat("sv_chi2", fitter.chi2());
       lepton_pair.addUserFloat("sv_ndof", fitter.dof()); // float??
       lepton_pair.addUserFloat("sv_prob", fitter.prob());
