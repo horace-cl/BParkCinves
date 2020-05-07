@@ -5,7 +5,7 @@ config=config()
 #A name the user gives to it's request/task. 
 #In particular, it is used by CRAB to create a project directory 
 #(named crab_<requestName>) 
-config.General.requestName = 'Bplus_parkedData_20-04-25_a'
+config.General.requestName = 'Bplus_parkedData_20-05-01'
 
 #The area (full or relative path) where to create the CRAB project directory.
 config.General.workArea = 'crab_projects'

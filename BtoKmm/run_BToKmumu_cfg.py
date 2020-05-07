@@ -58,7 +58,12 @@ extension = {False : 'data', True : 'mc'}
 outputFileNANO = cms.untracked.string('_'.join(['BParkNANO', extension[options.isMC], options.tag])+'.root')
 outputFileFEVT = cms.untracked.string('_'.join(['BParkFullEvt', extension[options.isMC], options.tag])+'.root')
 if not options.inputFiles:
-	if options.isMC:
+
+	if 'local' in options.tag:
+		options.inputFiles = ['file:/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/input.root']
+	elif 'debug' in options.tag:
+		options.inputFiles = ['file:/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/pickevents.root']
+	elif options.isMC:
 		options.inputFiles = ['/store/cmst3/group/bpark/BToKmumu_1000Events_MINIAOD.root']
 	else:
 		options.inputFiles = [
