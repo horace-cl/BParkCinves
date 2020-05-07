@@ -85,13 +85,11 @@ void DiLeptonBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
       lepton_pair.addUserCand("l2", l2_ptr );
 
       if( !pre_vtx_selection_(lepton_pair) ) continue; // before making the SV, cut on the info we have
-      std::cout << "Pre fitter DILEPTON   ";
       KinVtxFitter fitter(
         {ttracks->at(l1_idx), ttracks->at(l2_idx)},
         {l1_ptr->mass(), l2_ptr->mass()},
         {LEP_SIGMA, LEP_SIGMA} //some small sigma for the particle mass
         );
-      std::cout << "Post fitter DILEPTON   \n";
       lepton_pair.addUserFloat("sv_chi2", fitter.chi2());
       lepton_pair.addUserFloat("sv_ndof", fitter.dof()); // float??
       lepton_pair.addUserFloat("sv_prob", fitter.prob());
@@ -104,6 +102,14 @@ void DiLeptonBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
       lepton_pair.addUserFloat("fitted_l2_pt" , fitter.success() ? fitter.daughter_p4(1).pt():  -1); 
       lepton_pair.addUserFloat("fitted_l2_eta", fitter.success() ? fitter.daughter_p4(1).eta(): -1);
       lepton_pair.addUserFloat("fitted_l2_phi", fitter.success() ? fitter.daughter_p4(1).phi(): -1);
+      //Uncertainity Matrix
+      lepton_pair.addUserFloat("vtx_ex" , fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().cxx()) : -1);
+      lepton_pair.addUserFloat("vtx_ey" , fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().cyy()) : -1);
+      lepton_pair.addUserFloat("vtx_ez" , fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().czz()) : -1);
+      lepton_pair.addUserFloat("vtx_eyx", fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().cyx()) : -1);
+      lepton_pair.addUserFloat("vtx_ezx", fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().czx()) : -1);
+      lepton_pair.addUserFloat("vtx_ezy", fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().czy()) : -1);
+
 
       // cut on the SV info
       if( !post_vtx_selection_(lepton_pair) ) continue;

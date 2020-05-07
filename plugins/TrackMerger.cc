@@ -48,7 +48,7 @@ public:
 {
     produces<pat::CompositeCandidateCollection>("SelectedTracks");  
     produces<TransientTrackCollection>("SelectedTransientTracks");  
-}
+} 
 
   ~TrackMerger() override {}
 
@@ -220,6 +220,20 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
         }
 
     }
+
+
+    // try{
+    //   std::cout << "The vertexCovariance Matrix:\n";
+    //   for (unsigned int i=0; i<3; i++){
+    //     for (unsigned int j=0; j<3; j++){
+    //       std::cout << trk.vertexCovariance(i,j)<< ' ';
+    //     }
+    //     std::cout << "\n";
+    //   }  
+    // }
+    // catch(const edm::Exception& e){
+    //   std::cout << e;
+    // }
 
     pat::CompositeCandidate pcand;
     pcand.setP4(trk.p4());

@@ -156,15 +156,15 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
   std::vector<int> used_lep1_id, used_lep2_id, used_trk_id;
 
-  std::cout << "Kaons Size:  "<< kaons->size() << std::endl;
-  std::cout << "Dileptons Size:  "<< dileptons->size() << std::endl;
+  //std::cout << "Kaons Size:  "<< kaons->size() << std::endl;
+  //std::cout << "Dileptons Size:  "<< dileptons->size() << std::endl;
   // output
   std::unique_ptr<pat::CompositeCandidateCollection> ret_val(new pat::CompositeCandidateCollection());
 
   for(size_t k_idx = 0; k_idx < kaons->size(); ++k_idx) {
     edm::Ptr<pat::CompositeCandidate> k_ptr(kaons, k_idx);
     
-    std::cout << "K id : " << k_idx << std::endl;
+   // std::cout << "K id : " << k_idx << std::endl;
     
    // try {
     if( !k_selection_(*k_ptr) ) continue;
@@ -178,7 +178,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
     for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
       
-      std::cout << "Dimu id : " << ll_idx << std::endl;
+     // std::cout << "Dimu id : " << ll_idx << std::endl;
 
       edm::Ptr<pat::CompositeCandidate> ll_prt(dileptons, ll_idx);
       edm::Ptr<reco::Candidate> l1_ptr = ll_prt->userCand("l1");
@@ -287,27 +287,34 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("vtx_x", cand.vx());
       cand.addUserFloat("vtx_y", cand.vy());
       cand.addUserFloat("vtx_z", cand.vz());
-
       cand.addUserFloat("vtx_ex" , sqrt(fitter.fitted_vtx_uncertainty().cxx()));
       cand.addUserFloat("vtx_ey" , sqrt(fitter.fitted_vtx_uncertainty().cyy()));
       cand.addUserFloat("vtx_ez" , sqrt(fitter.fitted_vtx_uncertainty().czz()));
-        // cand.addUserFloat("vtx_exy", sqrt(fitter.fitted_vtx_uncertainty().cxy()));
+      try{
         cand.addUserFloat("vtx_eyx", sqrt(fitter.fitted_vtx_uncertainty().cyx()));
         cand.addUserFloat("vtx_ezx", sqrt(fitter.fitted_vtx_uncertainty().czx()));
         cand.addUserFloat("vtx_ezy", sqrt(fitter.fitted_vtx_uncertainty().czy()));
-        cand.addUserFloat("vtx_eyx", -1.0);
-        cand.addUserFloat("vtx_ezx", -1.0);
-        cand.addUserFloat("vtx_ezy", -1.0);
+      }
+      catch(...){
+        cand.addUserFloat("vtx_eyx", -1);
+        cand.addUserFloat("vtx_ezx", -1);
+        cand.addUserFloat("vtx_ezy", -1);
+      }
       cand.addUserFloat("fitted_l1_pt" , fitter.daughter_p4(0).pt()); 
       cand.addUserFloat("fitted_l1_eta", fitter.daughter_p4(0).eta());
       cand.addUserFloat("fitted_l1_phi", fitter.daughter_p4(0).phi());
+      cand.addUserFloat("l1_charge", l1_ptr->charge());
+
       cand.addUserFloat("fitted_l2_pt" , fitter.daughter_p4(1).pt()); 
       cand.addUserFloat("fitted_l2_eta", fitter.daughter_p4(1).eta());
       cand.addUserFloat("fitted_l2_phi", fitter.daughter_p4(1).phi());
+      cand.addUserFloat("l2_charge", l2_ptr->charge());
+
       cand.addUserFloat("fitted_k_pt"  , fitter.daughter_p4(2).pt()); 
       cand.addUserFloat("fitted_k_eta" , fitter.daughter_p4(2).eta());
       cand.addUserFloat("fitted_k_phi" , fitter.daughter_p4(2).phi());
-    
+      cand.addUserFloat("k_charge", k_ptr->charge());
+      
       if( !post_vtx_selection_(cand) ) continue;        
 
       //compute isolation

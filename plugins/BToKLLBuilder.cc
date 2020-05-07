@@ -216,8 +216,9 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("vtx_ex" , sqrt(fitter.fitted_vtx_uncertainty().cxx()));
       cand.addUserFloat("vtx_ey" , sqrt(fitter.fitted_vtx_uncertainty().cyy()));
       cand.addUserFloat("vtx_ez" , sqrt(fitter.fitted_vtx_uncertainty().czz()));
-      // cand.addUserFloat("vtx_exy", sqrt(fitter.fitted_vtx_uncertainty().cxy()));
       cand.addUserFloat("vtx_eyx", sqrt(fitter.fitted_vtx_uncertainty().cyx()));
+      cand.addUserFloat("vtx_ezx", sqrt(fitter.fitted_vtx_uncertainty().czx()));
+      cand.addUserFloat("vtx_ezy", sqrt(fitter.fitted_vtx_uncertainty().czy()));
 
       cand.addUserFloat("fitted_l1_pt" , fitter.daughter_p4(0).pt()); 
       cand.addUserFloat("fitted_l1_eta", fitter.daughter_p4(0).eta());
@@ -289,31 +290,31 @@ void BToKLLBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
 
 
-      // Aqui creemos el boost al CM del dilepton
-      math::XYZTLorentzVector dilep = ll_prt->p4();
+      // // Aqui creemos el boost al CM del dilepton
+      // math::XYZTLorentzVector dilep = ll_prt->p4();
       
-      ROOT::Math::Boost cmboost(dilep.BoostToCM());
-      math::XYZTLorentzVector kaonCM(  cmboost( k_ptr->p4() )  );
-      math::XYZTLorentzVector muonCM1, muonCM2;
-      if (l1_ptr->charge()==-1){
-        muonCM1 = cmboost(l1_ptr->p4()) ;
-        muonCM2 = cmboost(l2_ptr->p4()) ;
-      }
-      else {
-        muonCM1 = cmboost(l2_ptr->p4()) ;
-        muonCM2 = cmboost(l1_ptr->p4()) ;
-      } 
+      // ROOT::Math::Boost cmboost(dilep.BoostToCM());
+      // math::XYZTLorentzVector kaonCM(  cmboost( k_ptr->p4() )  );
+      // math::XYZTLorentzVector muonCM1, muonCM2;
+      // if (l1_ptr->charge()==-1){
+      //   muonCM1 = cmboost(l1_ptr->p4()) ;
+      //   muonCM2 = cmboost(l2_ptr->p4()) ;
+      // }
+      // else {
+      //   muonCM1 = cmboost(l2_ptr->p4()) ;
+      //   muonCM2 = cmboost(l1_ptr->p4()) ;
+      // } 
 
-      float costhetaL = ( muonCM1.x()*muonCM2.x() 
-                         + muonCM1.y()*muonCM2.y() 
-                         + muonCM1.z()*muonCM2.z() ) / (muonCM1.P()*muonCM2.P() );
+      // float costhetaL = ( muonCM1.x()*muonCM2.x() 
+      //                    + muonCM1.y()*muonCM2.y() 
+      //                    + muonCM1.z()*muonCM2.z() ) / (muonCM1.P()*muonCM2.P() );
 
-      float costhetaKL = ( muonCM1.x()*kaonCM.x()
-                         + muonCM1.y()*kaonCM.y()
-                         + muonCM1.z()*kaonCM.z() ) / (muonCM1.P()*kaonCM.P() );
+      // float costhetaKL = ( muonCM1.x()*kaonCM.x()
+      //                    + muonCM1.y()*kaonCM.y()
+      //                    + muonCM1.z()*kaonCM.z() ) / (muonCM1.P()*kaonCM.P() );
 
-      cand.addUserFloat("cosTheta_mm", costhetaL);
-      cand.addUserFloat("cosTheta_km", costhetaKL);
+      // cand.addUserFloat("cosTheta_mm", costhetaL);
+      // cand.addUserFloat("cosTheta_km", costhetaKL);
 
 
 
