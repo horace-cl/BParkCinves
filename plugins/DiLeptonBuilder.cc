@@ -35,7 +35,7 @@ public:
     src_{consumes<LeptonCollection>( cfg.getParameter<edm::InputTag>("src") )},
     ttracks_src_{consumes<TransientTrackCollection>( cfg.getParameter<edm::InputTag>("transientTracksSrc") )} {
        produces<pat::CompositeCandidateCollection>();
-    }
+    } 
 
   ~DiLeptonBuilder() override {}
   

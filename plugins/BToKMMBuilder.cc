@@ -282,7 +282,10 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("l_xy", lxy.value());
       cand.addUserFloat("l_xy_unc", lxy.error());
 
-      //std::cout << "Comienza matriz errores Vertex\n";
+      //Almacenemos la informacion del beamspot 
+      reco::BeamSpot bs = *beamspot;
+      cand.addUserFloat("beamSpot_x", bs.x(cand.vz()));
+      cand.addUserFloat("beamSpot_y", bs.y(cand.vz()));
 
       cand.addUserFloat("vtx_x", cand.vx());
       cand.addUserFloat("vtx_y", cand.vy());

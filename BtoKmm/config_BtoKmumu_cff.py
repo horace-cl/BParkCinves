@@ -1,4 +1,4 @@
-# Lets try to recosntruct the channel B -> K* Mu Mu
+# Lets try to reconstruct the channel B -> K* Mu Mu
 
 import FWCore.ParameterSet.Config as cms
 from PhysicsTools.NanoAOD.common_cff import *
@@ -393,6 +393,8 @@ BToKmumuTable = cms.EDProducer(
         svprob = ufloat('sv_prob'),
         l_xy = ufloat('l_xy'),
         l_xy_unc = ufloat('l_xy_unc'),
+        beamspot_x = ufloat('beamSpot_x'),
+        beamspot_y = ufloat('beamSpot_y'),
         vtx_x = ufloat('vtx_x'),
         vtx_y = ufloat('vtx_y'),
         vtx_z = ufloat('vtx_z'),
