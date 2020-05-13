@@ -70,18 +70,18 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     singleton = cms.bool(False), # the number of entries is variable
     extension = cms.bool(False), # this is the main table for the muons
     variables = cms.PSet(CandVars,
-        ptErr   = Var("bestTrack().ptError()", float, doc = "ptError of the muon track", precision=6),
-        dz = Var("dB('PVDZ')",float,doc="dz (with sign) wrt first PV, in cm",precision=10),
-        dzErr = Var("abs(edB('PVDZ'))",float,doc="dz uncertainty, in cm",precision=6),
-        dxy = Var("dB('PV2D')",float,doc="dxy (with sign) wrt first PV, in cm",precision=10),
-        dxyErr = Var("edB('PV2D')",float,doc="dxy uncertainty, in cm",precision=6),
-        vx = Var("vx()",float,doc="x coordinate of vertex position, in cm",precision=6),
-        vy = Var("vy()",float,doc="y coordinate of vertex position, in cm",precision=6),
-        vz = Var("vz()",float,doc="z coordinate of vertex position, in cm",precision=6),
-        px = Var("px()",float,doc="x momentum",precision=6),
-        py = Var("py()",float,doc="y momentum",precision=6),
-        pz = Var("pz()",float,doc="z momentum",precision=6),
-        energy = Var("energy()", float, doc = "energy of the muon", precision=6),
+        # ptErr   = Var("bestTrack().ptError()", float, doc = "ptError of the muon track", precision=6),
+        # dz = Var("dB('PVDZ')",float,doc="dz (with sign) wrt first PV, in cm",precision=10),
+        # dzErr = Var("abs(edB('PVDZ'))",float,doc="dz uncertainty, in cm",precision=6),
+        # dxy = Var("dB('PV2D')",float,doc="dxy (with sign) wrt first PV, in cm",precision=10),
+        # dxyErr = Var("edB('PV2D')",float,doc="dxy uncertainty, in cm",precision=6),
+        # vx = Var("vx()",float,doc="x coordinate of vertex position, in cm",precision=6),
+        # vy = Var("vy()",float,doc="y coordinate of vertex position, in cm",precision=6),
+        # vz = Var("vz()",float,doc="z coordinate of vertex position, in cm",precision=6),
+        # px = Var("px()",float,doc="x momentum",precision=6),
+        # py = Var("py()",float,doc="y momentum",precision=6),
+        # pz = Var("pz()",float,doc="z momentum",precision=6),
+        # energy = Var("energy()", float, doc = "energy of the muon", precision=6),
         # ip3d = Var("abs(dB('PV3D'))",float,doc="3D impact parameter wrt first PV, in cm",precision=10),
         # sip3d = Var("abs(dB('PV3D')/edB('PV3D'))",float,doc="3D impact parameter significance wrt first PV",precision=10),
         # segmentComp   = Var("segm entCompatibility()", float, doc = "muon segment compatibility", precision=14), # keep higher precision since people have cuts with 3 digits on this
@@ -107,7 +107,7 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         # # multiIsoId = Var("?passed('MultiIsoMedium')?2:passed('MultiIsoLoose')","uint8",doc="MultiIsoId from miniAOD selector (1=MultiIsoLoose, 2=MultiIsoMedium)"),
         # triggerIdLoose = Var("passed('TriggerIdLoose')",bool,doc="TriggerIdLoose ID"),
         # # inTimeMuon = Var("passed('InTimeMuon')",bool,doc="inTimeMuon ID"),
-        # isTriggering = Var("userInt('isTriggering')", int,doc="flag the reco muon is also triggering")
+        isTriggering = Var("userInt('isTriggering')", int,doc="flag the reco muon is also triggering")
     ),
 )
 
@@ -373,8 +373,12 @@ BToKmumuTable = cms.EDProducer(
         l1Idx = uint('l1_idx'),
         l2Idx = uint('l2_idx'),
         kIdx = uint('k_idx'),
-        minDR = ufloat('min_dr'),
-        maxDR = ufloat('max_dr'),
+        # minDR = ufloat('min_dr'),
+        # maxDR = ufloat('max_dr'),
+        dr_l1 = ufloat('dr_l1'),
+        dr_l2 = ufloat('dr_l2'),
+        dz_l1 = ufloat('dz_l1'),
+        dz_l2 = ufloat('dz_l2'),
         # #HCL
         # l1Vx = ufloat("l1_vx"),
         # l1Vy = ufloat("l1_vy"),
@@ -393,8 +397,8 @@ BToKmumuTable = cms.EDProducer(
         svprob = ufloat('sv_prob'),
         l_xy = ufloat('l_xy'),
         l_xy_unc = ufloat('l_xy_unc'),
-        beamspot_x = ufloat('beamSpot_x'),
-        beamspot_y = ufloat('beamSpot_y'),
+        # beamspot_x = ufloat('beamSpot_x'),
+        # beamspot_y = ufloat('beamSpot_y'),
         vtx_x = ufloat('vtx_x'),
         vtx_y = ufloat('vtx_y'),
         vtx_z = ufloat('vtx_z'),
@@ -441,14 +445,14 @@ BToKmumuTable = cms.EDProducer(
         fit_k_phi = ufloat('fitted_k_phi'),
         k_charge = ufloat('k_charge'),
 
-        # l1_iso03 = ufloat('l1_iso03'),
-        # l1_iso04 = ufloat('l1_iso04'),
-        # l2_iso03 = ufloat('l2_iso03'),
-        # l2_iso04 = ufloat('l2_iso04'),
-        # k_iso03  = ufloat('k_iso03'),
-        # k_iso04  = ufloat('k_iso04'),
-        # b_iso03  = ufloat('b_iso03'),
-        # b_iso04  = ufloat('b_iso04'),
+        l1_iso03 = ufloat('l1_iso03'),
+        l1_iso04 = ufloat('l1_iso04'),
+        l2_iso03 = ufloat('l2_iso03'),
+        l2_iso04 = ufloat('l2_iso04'),
+        k_iso03  = ufloat('k_iso03'),
+        k_iso04  = ufloat('k_iso04'),
+        b_iso03  = ufloat('b_iso03'),
+        b_iso04  = ufloat('b_iso04'),
         # n_k_used = uint('n_k_used'),
         # n_l1_used = uint('n_l1_used'),
         # n_l2_used = uint('n_l2_used'),
@@ -524,7 +528,7 @@ nanoSequence = cms.Sequence(# Original
                             # triggerObjectBParkTables + l1bits +
 
                             # # customizeMuonTriggerBPark
-                            muonBParkSequence + # muonBParkTables +#muonTriggerMatchedTables +
+                            muonBParkSequence + muonBParkTables +#muonTriggerMatchedTables +
                             
                             # # customizeTrackFilteredBPark
                             tracksBParkSequence #+ tracksBParkTables

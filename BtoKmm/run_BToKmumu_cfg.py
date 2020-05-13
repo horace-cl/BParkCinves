@@ -44,7 +44,7 @@ options.register('maxE', 3000,
     "Maximum number of events"
 )
 
-options.register('tg', '3k_parseArgs',
+options.register('tg', 'BParking',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "tag for outputfile"

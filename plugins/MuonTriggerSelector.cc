@@ -256,8 +256,8 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
           dRMuonMatching = dR;
           recoMuonMatching_index = iMuo;
           trgMuonMatching_index = iTrg;
-          float eta = muon.eta() - triggeringMuons[iTrg].eta();
-          float phi = muon.phi() - triggeringMuons[iTrg].phi();
+          // float eta = muon.eta() - triggeringMuons[iTrg].eta();
+          // float phi = muon.phi() - triggeringMuons[iTrg].phi();
           // dR_H = std::sqrt(eta*eta+phi*phi);
 
           // std::cout << "\n\t\t dR_H"<< iTrg <<" = " << dR_H

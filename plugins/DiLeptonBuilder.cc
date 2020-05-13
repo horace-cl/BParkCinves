@@ -67,10 +67,12 @@ void DiLeptonBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
   
   for(size_t l1_idx = 0; l1_idx < leptons->size(); ++l1_idx) {
     edm::Ptr<Lepton> l1_ptr(leptons, l1_idx);
+
     if(!l1_selection_(*l1_ptr)) continue; 
     
     for(size_t l2_idx = l1_idx + 1; l2_idx < leptons->size(); ++l2_idx) {
       edm::Ptr<Lepton> l2_ptr(leptons, l2_idx);
+
       if(!l2_selection_(*l2_ptr)) continue;
 
       pat::CompositeCandidate lepton_pair;

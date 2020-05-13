@@ -27,6 +27,7 @@
 #include <Math/VectorUtil.h>
 
 #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicVertex.h"
+#include "DataFormats/Math/interface/deltaR.h"
  
 class BToKMMBuilder : public edm::global::EDProducer<> {
 
@@ -199,10 +200,18 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserInt("l1_idx", l1_idx);
       cand.addUserInt("l2_idx", l2_idx);
       cand.addUserInt("k_idx", k_idx);
-    
+     
       auto dr_info = min_max_dr({l1_ptr, l2_ptr, k_ptr});
       cand.addUserFloat("min_dr", dr_info.first);
       cand.addUserFloat("max_dr", dr_info.second);
+
+      float dr1 = reco::deltaR(*l1_ptr, *k_ptr);
+      float dr2 = reco::deltaR(*l2_ptr, *k_ptr);
+      cand.addUserFloat("dr_l1", dr1);
+      cand.addUserFloat("dr_l2", dr2);
+      cand.addUserFloat("dz_l1", fabs( l1_ptr->vz()-k_ptr->vz() ) );
+      cand.addUserFloat("dz_l2", fabs( l2_ptr->vz()-k_ptr->vz() ) );
+
       // TODO add meaningful variables
       // Variables Pre fitting
       // muon1
@@ -282,10 +291,10 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("l_xy", lxy.value());
       cand.addUserFloat("l_xy_unc", lxy.error());
 
-      //Almacenemos la informacion del beamspot 
-      reco::BeamSpot bs = *beamspot;
-      cand.addUserFloat("beamSpot_x", bs.x(cand.vz()));
-      cand.addUserFloat("beamSpot_y", bs.y(cand.vz()));
+      // //Almacenemos la informacion del beamspot 
+      // reco::BeamSpot bs = *beamspot;
+      // cand.addUserFloat("beamSpot_x", bs.x(cand.vz()));
+      // cand.addUserFloat("beamSpot_y", bs.y(cand.vz()));
 
       cand.addUserFloat("vtx_x", cand.vx());
       cand.addUserFloat("vtx_y", cand.vy());
@@ -294,9 +303,9 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("vtx_ey" , sqrt(fitter.fitted_vtx_uncertainty().cyy()));
       cand.addUserFloat("vtx_ez" , sqrt(fitter.fitted_vtx_uncertainty().czz()));
       try{
-        cand.addUserFloat("vtx_eyx", sqrt(fitter.fitted_vtx_uncertainty().cyx()));
-        cand.addUserFloat("vtx_ezx", sqrt(fitter.fitted_vtx_uncertainty().czx()));
-        cand.addUserFloat("vtx_ezy", sqrt(fitter.fitted_vtx_uncertainty().czy()));
+        cand.addUserFloat("vtx_eyx", fitter.fitted_vtx_uncertainty().cyx());
+        cand.addUserFloat("vtx_ezx", fitter.fitted_vtx_uncertainty().czx());
+        cand.addUserFloat("vtx_ezy", fitter.fitted_vtx_uncertainty().czy());
       }
       catch(...){
         cand.addUserFloat("vtx_eyx", -1);
@@ -407,23 +416,23 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
       std::vector<float> cosAlpha(3, -2);
       std::vector<float> lxy_pv(3,-1);
-      std::vector<float> signifi(3,-1);
+      std::vector<float> errP(3,-1);
 
       // CHEQUEMOS QUE EL CANDIDATO A "B" SATIFAGA LOS CORTES EN COS(ALPHA) Y SIGNIFICANCIA
       for( unsigned int iPV=0; iPV<dzTrgMu.size(); ++iPV ){ 
         //Debemos calcular el vector que une los vertices primario y el ajustado
-        math::XYZVector vPSv(cand.vx()-vx.at(iPV), cand.vy()-vy.at(iPV), cand.vz()-vz.at(iPV));
+        math::XYZVector vPS(cand.vx()-vx.at(iPV), cand.vy()-vy.at(iPV), cand.vz()-vz.at(iPV));
         //Momento espacial del candidato
         math::XYZVector Bp(fitter.fitted_candidate().globalMomentum().x(), fitter.fitted_candidate().globalMomentum().y(), fitter.fitted_candidate().globalMomentum().z());
         //CosALPHA
-        cosAlpha[iPV] = vPSv.Dot(Bp)/(vPSv.R()*Bp.R());
+        cosAlpha[iPV] = vPS.Dot(Bp)/(vPS.R()*Bp.R());
         
-        //Para significancia:
-        // GlobalPoint point = fitter.fitted_vtx();
-        // GlobalError err = fitter.fitted_vtx_uncertainty();
-        // GlobalPoint delta(point.x() - vx.at(iPV), point.y() - vy.at(iPV), 0.);  
-        lxy_pv[iPV] = sqrt(vPSv.Perp2());
-        signifi[iPV] = sqrt(vPSv.Perp2()/fitter.fitted_vtx_uncertainty().cyx());
+        //Para significancia:  
+        GlobalError err = fitter.fitted_vtx_uncertainty();
+        GlobalPoint delta(cand.vx()-vx.at(iPV), cand.vy()-vy.at(iPV), 0.);  
+
+        lxy_pv[iPV] = delta.perp();
+        errP[iPV] = sqrt(err.rerr(delta));
 
       }
 
@@ -435,9 +444,9 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("lxy_pv1", lxy_pv[1]);
       cand.addUserFloat("lxy_pv2", lxy_pv[2]);
 
-      cand.addUserFloat("significance0", signifi[0]);
-      cand.addUserFloat("significance1", signifi[1]);
-      cand.addUserFloat("significance2", signifi[2]);
+      cand.addUserFloat("significance0", lxy_pv[0]/errP[0]);
+      cand.addUserFloat("significance1", lxy_pv[1]/errP[1]);
+      cand.addUserFloat("significance2", lxy_pv[2]/errP[2]);
 
 
 
