@@ -5,7 +5,7 @@ config=config()
 #A name the user gives to it's request/task. 
 #In particular, it is used by CRAB to create a project directory 
 #(named crab_<requestName>) 
-config.General.requestName = 'Bplus_parkedData_20-05-24_D1'
+config.General.requestName = 'Bplus_MC_20-06-04'
 
 #The area (full or relative path) where to create the CRAB project directory.
 config.General.workArea = 'crab_projects'
@@ -38,10 +38,11 @@ config.JobType.allowUndistributedCMSSW = True
 
 
 #config.Data.inputDataset = '/ParkingBPH4/Run2018B-05May2019-v2/MINIAOD'
-config.Data.inputDataset = '/ParkingBPH1/Run2018D-05May2019promptD-v1/MINIAOD' #1619434372 events
+#config.Data.inputDataset = '/ParkingBPH1/Run2018D-05May2019promptD-v1/MINIAOD' #1619434372 events
+config.Data.inputDataset = '/BuToKMuMu_probefilterPt6_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/RunIIAutumn18MiniAOD-PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v1/MINIAODSIM'
 config.Data.inputDBS = 'global'
-config.Data.splitting ='LumiBased'
-config.Data.unitsPerJob = 100
+config.Data.splitting ='FileBased'
+config.Data.unitsPerJob = 10
 #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions12/8TeV/Prompt/Cert_190456-208686_8TeV_PromptReco_Collisions12_JSON.txt'
 #config.Data.runRange = '317392'#, 317340#, 317320' # '193093-194075'
 #config.Data.publication = True

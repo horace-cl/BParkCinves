@@ -7,7 +7,7 @@ import FWCore.ParameterSet.Config as cms
 
 options = VarParsing('python')
 
-options.register('isMC', False,
+options.register('isMC', True,
     VarParsing.multiplicity.singleton,
     VarParsing.varType.bool,
     "Run this on real data"
@@ -221,7 +221,8 @@ process.NANOAODoutput = cms.OutputModule("NanoAODOutputModule",
 ######################################### GLOBAL TAG ################################################
 #####################################################################################################
 
-globaltag = '102X_dataRun2_v11' if not options.isMC else '102X_upgrade2018_realistic_v15'
+#globaltag = '102X_dataRun2_v11' if not options.isMC else '102X_upgrade2018_realistic_v15'
+globaltag = '102X_upgrade2018_realistic_v15'
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, globaltag, '')
 
@@ -236,9 +237,9 @@ from config_BtoKmumu_cff import *
 
 process.nanoAOD_KMuMu_step = cms.Path(nanoSequence  + nanoBKMuMuSequence + CountBToKmumu )
 
-if options.isMC:
-    from PhysicsTools.BParkingNano.nanoBPark_cff import nanoAOD_customizeMC
-    nanoAOD_customizeMC(process)
+#if options.isMC:
+from PhysicsTools.BParkingNano.nanoBPark_cff import nanoAOD_customizeMC
+nanoAOD_customizeMC(process)
 
 
 process.endjob_step = cms.EndPath(process.endOfProcess)
