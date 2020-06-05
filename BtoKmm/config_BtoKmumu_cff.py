@@ -16,7 +16,8 @@ from PhysicsTools.BParkingNano.trgbits_cff import *
 from PhysicsTools.BParkingNano.genparticlesBPark_cff import *
 from PhysicsTools.BParkingNano.particlelevelBPark_cff import *
 from PhysicsTools.BParkingNano.triggerObjectsBPark_cff import *
-from PhysicsTools.BParkingNano.muonsBPark_cff import muonTriggerMatchedTable, muonTriggerMatchedTables
+from PhysicsTools.BParkingNano.muonsBPark_cff import muonTriggerMatchedTable, muonTriggerMatchedTables,  muonsBParkMCMatchForTable, selectedMuonsMCMatchEmbedded, muonBParkMCTable
+from PhysicsTools.BParkingNano.tracksBPark_cff import tracksBParkMCMatchForTable, tracksBParkMCMatchEmbedded, tracksBParkMCTable
 
 ## filtered input collections
 from PhysicsTools.BParkingNano.electronsBPark_cff import * 
@@ -70,6 +71,7 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     singleton = cms.bool(False), # the number of entries is variable
     extension = cms.bool(False), # this is the main table for the muons
     variables = cms.PSet(CandVars,
+        # pt = Var("pt()", float, doc='transverse momentum', precision=6),
         # ptErr   = Var("bestTrack().ptError()", float, doc = "ptError of the muon track", precision=6),
         # dz = Var("dB('PVDZ')",float,doc="dz (with sign) wrt first PV, in cm",precision=10),
         # dzErr = Var("abs(edB('PVDZ'))",float,doc="dz uncertainty, in cm",precision=6),
@@ -81,12 +83,15 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         # px = Var("px()",float,doc="x momentum",precision=6),
         # py = Var("py()",float,doc="y momentum",precision=6),
         # pz = Var("pz()",float,doc="z momentum",precision=6),
-        # energy = Var("energy()", float, doc = "energy of the muon", precision=6),
+        energy = Var("energy()", float, doc = "energy of the muon", precision=6),
         # ip3d = Var("abs(dB('PV3D'))",float,doc="3D impact parameter wrt first PV, in cm",precision=10),
         # sip3d = Var("abs(dB('PV3D')/edB('PV3D'))",float,doc="3D impact parameter significance wrt first PV",precision=10),
-        # segmentComp   = Var("segm entCompatibility()", float, doc = "muon segment compatibility", precision=14), # keep higher precision since people have cuts with 3 digits on this
+        # segmentComp  = Var("segm entCompatibility()", float, doc = "muon segment compatibility", precision=14), # keep higher precision since people have cuts with 3 digits on this
         # nStations = Var("numberOfMatchedStations", int, doc = "number of matched stations with default arbitration (segment & track)"),
-        # nTrackerLayers = Var("innerTrack().hitPattern().trackerLayersWithMeasurement()", int, doc = "number of layers in the tracker"),
+        nTrackerLayers = Var("userInt('trackerLayers')", int, doc = "number of layers in the tracker"),
+        nPixelLayers = Var("userInt('pixelLayers')", int, doc = "number of layers in the pixel"),
+        nPixelHits = Var("userInt('ValidPixelHits')", int, doc= "Number of pixel Hits"),
+        nValidHits = Var("userInt('ValidHits')", int, doc='Valid Hits'),
         # pfRelIso03_chg = Var("pfIsolationR03().sumChargedHadronPt/pt",float,doc="PF relative isolation dR=0.3, charged component"),
         # pfRelIso03_all = Var("(pfIsolationR03().sumChargedHadronPt + max(pfIsolationR03().sumNeutralHadronEt + pfIsolationR03().sumPhotonEt - pfIsolationR03().sumPUPt/2,0.0))/pt",float,doc="PF relative isolation dR=0.3, total (deltaBeta corrections)"),
         # pfRelIso04_all = Var("(pfIsolationR04().sumChargedHadronPt + max(pfIsolationR04().sumNeutralHadronEt + pfIsolationR04().sumPhotonEt - pfIsolationR04().sumPUPt/2,0.0))/pt",float,doc="PF relative isolation dR=0.4, total (deltaBeta corrections)"),
@@ -107,14 +112,19 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         # # multiIsoId = Var("?passed('MultiIsoMedium')?2:passed('MultiIsoLoose')","uint8",doc="MultiIsoId from miniAOD selector (1=MultiIsoLoose, 2=MultiIsoMedium)"),
         # triggerIdLoose = Var("passed('TriggerIdLoose')",bool,doc="TriggerIdLoose ID"),
         # # inTimeMuon = Var("passed('InTimeMuon')",bool,doc="inTimeMuon ID"),
-        isTriggering = Var("userInt('isTriggering')", int,doc="flag the reco muon is also triggering")
+        isTriggering = Var("userInt('isTriggering')", int,doc="flag the reco muon is also triggering"),
+        isSoft = Var("userInt('isSoft')", int,doc="flag the reco muon is also Soft"),
     ),
 )
 
-muonBParkSequence = cms.Sequence(muonTrgSelector * countTrgMuons * countSelectedMuons)
-# muonBParkMC = cms.Sequence(muonBParkSequence + muonsBParkMCMatchForTable + selectedMuonsMCMatchEmbedded + muonBParkMCTable)
+muonBParkSequence = cms.Sequence(muonTrgSelector * countTrgMuons )#* countSelectedMuons)
+muonBParkMC = cms.Sequence(muonBParkSequence + muonsBParkMCMatchForTable + selectedMuonsMCMatchEmbedded + muonBParkMCTable)
 muonBParkTables = cms.Sequence(muonBParkTable)
 # muonTriggerMatchedTables = cms.Sequence(muonTriggerMatchedTable)
+
+
+
+
 
 
 
@@ -156,21 +166,21 @@ trackBParkTable = cms.EDProducer(
         vz = Var("vz()", float, doc="z coordinate of vertex position, in cm", precision=10),
         # isPacked = Var("userInt('isPacked')",int,doc="track from packedCandidate collection", precision=10),
         # isLostTrk = Var("userInt('isLostTrk')",int,doc="track from lostTrack collection", precision=10),
-        px = Var("userFloat('px')",float,doc="pz", precision=10),
-        py = Var("userFloat('py')",float,doc="py", precision=10),
-        pz = Var("userFloat('pz')",float,doc="pz", precision=10),
-        energy = Var("userFloat('energy')",float,doc="energy", precision=10),
+        # px = Var("userFloat('px')",float,doc="pz", precision=10),
+        # py = Var("userFloat('py')",float,doc="py", precision=10),
+        # pz = Var("userFloat('pz')",float,doc="pz", precision=10),
+        # energy = Var("userFloat('energy')",float,doc="energy", precision=10),
         #mass = Var("userFloat('mass')",float,doc="mass", precision=10),
         # dz = Var("userFloat('dz')",float,doc="dz (with sign) wrt first PV, in cm", precision=10),
         # dxy = Var("userFloat('dxy')",float,doc="dxy (with sign) wrt first PV, in cm", precision=10),
         # dzS = Var("userFloat('dzS')", float, doc="dz/err (with sign) wrt first PV, in cm", precision=10),
         # dxyS = Var("userFloat('dxyS')", float, doc="dxy/err (with sign) wrt first PV, in cm", precision=10),
-        # DCASig=Var("userFloat('DCASig')", float,doc="significance of xy-distance of closest approach wrt beamspot", precision=10),
-        # isMatchedToMuon = Var("userInt('isMatchedToMuon')",bool,doc="track was used to build a muon", precision=10),
-        # isMatchedToLooseMuon = Var("userInt('isMatchedToLooseMuon')",bool,doc="track was used to build a muon passing LooseID", precision=10),
-        # isMatchedToSoftMuon = Var("userInt('isMatchedToSoftMuon')",bool,doc="track was used to build a muon passing softID", precision=10),
-        # isMatchedToMediumMuon = Var("userInt('isMatchedToMediumMuon')",bool,doc="track was used to build a muon passing mediumID", precision=10),
-        # isMatchedToEle = Var("userInt('isMatchedToEle')",bool,doc="track was used to build a PF ele", precision=10),
+        DCASig=Var("userFloat('DCASig')", float,doc="significance of xy-distance of closest approach wrt beamspot", precision=10),
+        isMatchedToMuon = Var("userInt('isMatchedToMuon')",bool,doc="track was used to build a muon", precision=10),
+        isMatchedToLooseMuon = Var("userInt('isMatchedToLooseMuon')",bool,doc="track was used to build a muon passing LooseID", precision=10),
+        isMatchedToSoftMuon = Var("userInt('isMatchedToSoftMuon')",bool,doc="track was used to build a muon passing softID", precision=10),
+        isMatchedToMediumMuon = Var("userInt('isMatchedToMediumMuon')",bool,doc="track was used to build a muon passing mediumID", precision=10),
+        isMatchedToEle = Var("userInt('isMatchedToEle')",bool,doc="track was used to build a PF ele", precision=10),
         nValidHits = Var("userInt('nValidHits')", int,doc="Number of valid hits on track", precision=10),
         #dEdXStrip=Var("userFloat('dEdXStrip')", float,doc="dE/dX from strips of associated isolated track"),
         #dEdXPixel=Var("userFloat('dEdXPixel')", float,doc="dE/dX from pixels of associated isolated track"),
@@ -180,6 +190,9 @@ trackBParkTable = cms.EDProducer(
 
 tracksBParkSequence = cms.Sequence(tracksBPark)
 tracksBParkTables = cms.Sequence(trackBParkTable)
+
+tracksBParkMC = cms.Sequence(tracksBParkSequence + tracksBParkMCMatchForTable + tracksBParkMCMatchEmbedded + tracksBParkMCTable)
+
 
 #######################################################################################################
 ############################################ Dimuons ##################################################
@@ -192,8 +205,8 @@ muonPairsForKmumu = cms.EDProducer(
     transientTracksSrc = cms.InputTag('muonTrgSelector', 'SelectedTransientMuons'),
     lep1Selection = cms.string('pt > 1.5'),
     lep2Selection = cms.string(''),
-    preVtxSelection = cms.string('abs(userCand("l1").vz - userCand("l2").vz) <= 1. && mass() < 4. '
-                                 '&& mass() > 2.8 && charge() == 0 && userFloat("lep_deltaR") > 0.03'),
+    preVtxSelection = cms.string('abs(userCand("l1").vz - userCand("l2").vz) <= 1. && mass() < 5. '
+                                 '&& mass() > 0. && charge() == 0 && userFloat("lep_deltaR") > 0.03'),
     postVtxSelection = cms.string('userFloat("sv_chi2") < 998 && userFloat("sv_prob") > 1.e-5'),
 )
 
@@ -445,19 +458,19 @@ BToKmumuTable = cms.EDProducer(
         fit_k_phi = ufloat('fitted_k_phi'),
         k_charge = ufloat('k_charge'),
 
-        l1_iso03 = ufloat('l1_iso03'),
-        l1_iso04 = ufloat('l1_iso04'),
-        l2_iso03 = ufloat('l2_iso03'),
-        l2_iso04 = ufloat('l2_iso04'),
-        k_iso03  = ufloat('k_iso03'),
-        k_iso04  = ufloat('k_iso04'),
-        b_iso03  = ufloat('b_iso03'),
-        b_iso04  = ufloat('b_iso04'),
+        # l1_iso03 = ufloat('l1_iso03'),
+        # l1_iso04 = ufloat('l1_iso04'),
+        # l2_iso03 = ufloat('l2_iso03'),
+        # l2_iso04 = ufloat('l2_iso04'),
+        # k_iso03  = ufloat('k_iso03'),
+        # k_iso04  = ufloat('k_iso04'),
+        # b_iso03  = ufloat('b_iso03'),
+        # b_iso04  = ufloat('b_iso04'),
         # n_k_used = uint('n_k_used'),
         # n_l1_used = uint('n_l1_used'),
         # n_l2_used = uint('n_l2_used'),
-        cosThetaMuMu = ufloat("cosTheta_mm"),
-        cosThetaKMu = ufloat("cosTheta_km"),
+        # cosThetaMuMu = ufloat("cosTheta_mm"),
+        # cosThetaKMu = ufloat("cosTheta_km"),
 
         cosAlpha_0 = ufloat("cosAlpha0"),
         cosAlpha_1 = ufloat("cosAlpha1"),
@@ -470,6 +483,29 @@ BToKmumuTable = cms.EDProducer(
         significance0 = ufloat("significance0"),
         significance1 = ufloat("significance1"),
         significance2 = ufloat("significance2"),
+ 
+        PDL = ufloat("PDL"),
+        ePDL = ufloat("ePDL"),
+
+        k_DCASig = ufloat("k_DCASig"),
+        k_nValidHits = ufloat("k_nValidHits"),
+        k_matchMuon = uint("k_isMatchedToMuon"),
+        k_matchLooseMuon = uint("k_isMatchedToLooseMuon"),
+        k_matchSoftMuon = uint("k_isMatchedToSoftMuon"),
+        k_matchMediumMuon = uint("k_isMatchedToMediumMuon"),
+    
+        # l1_isPFMuon = uint("l1_isPFMuon"),
+        # l1_isGlobalMuon = uint("l1_isGlobalMuon"),
+        # l1_isTrackerMuon = uint("l1_isTrackerMuon"),
+        # l1_isTriggering = uint("l1_isTriggering"),
+        # l1_isSoft = uint("l1_isSoft"),
+
+        # l2_isPFMuon = uint("l2_isPFMuon"),
+        # l2_isGlobalMuon = uint("l2_isGlobalMuon"),
+        # l2_isTrackerMuon = uint("l2_isTrackerMuon"),
+        # l2_isTriggering = uint("l2_isTriggering"),
+        # l2_isSoft = uint("l2_isSoft"),
+
     )
 )
 
@@ -531,9 +567,14 @@ nanoSequence = cms.Sequence(# Original
                             muonBParkSequence + muonBParkTables +#muonTriggerMatchedTables +
                             
                             # # customizeTrackFilteredBPark
-                            tracksBParkSequence #+ tracksBParkTables
+                            tracksBParkSequence + tracksBParkTables
 
                             # #customizeTriggerBitsBPark
                             #trgTables 
                             )
-                            # )
+
+# nanoSequenceMC = cms.Sequence(particleLevelBParkSequence + genParticleBParkSequence + 
+#                               globalTablesMC + genWeightsTable + genParticleBParkTables + lheInfoTable) 
+
+
+

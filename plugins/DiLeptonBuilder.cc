@@ -105,12 +105,12 @@ void DiLeptonBuilder<Lepton>::produce(edm::StreamID, edm::Event &evt, edm::Event
       lepton_pair.addUserFloat("fitted_l2_eta", fitter.success() ? fitter.daughter_p4(1).eta(): -1);
       lepton_pair.addUserFloat("fitted_l2_phi", fitter.success() ? fitter.daughter_p4(1).phi(): -1);
       //Uncertainity Matrix
-      lepton_pair.addUserFloat("vtx_ex" , fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().cxx()) : -1);
-      lepton_pair.addUserFloat("vtx_ey" , fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().cyy()) : -1);
-      lepton_pair.addUserFloat("vtx_ez" , fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().czz()) : -1);
-      lepton_pair.addUserFloat("vtx_eyx", fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().cyx()) : -1);
-      lepton_pair.addUserFloat("vtx_ezx", fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().czx()) : -1);
-      lepton_pair.addUserFloat("vtx_ezy", fitter.success() ? sqrt(fitter.fitted_vtx_uncertainty().czy()) : -1);
+      lepton_pair.addUserFloat("vtx_ex" , fitter.success() ? fitter.fitted_vtx_uncertainty().cxx() : -1);
+      lepton_pair.addUserFloat("vtx_ey" , fitter.success() ? fitter.fitted_vtx_uncertainty().cyy() : -1);
+      lepton_pair.addUserFloat("vtx_ez" , fitter.success() ? fitter.fitted_vtx_uncertainty().czz() : -1);
+      lepton_pair.addUserFloat("vtx_eyx", fitter.success() ? fitter.fitted_vtx_uncertainty().cyx() : -1);
+      lepton_pair.addUserFloat("vtx_ezx", fitter.success() ? fitter.fitted_vtx_uncertainty().czx() : -1);
+      lepton_pair.addUserFloat("vtx_ezy", fitter.success() ? fitter.fitted_vtx_uncertainty().czy() : -1);
 
 
       // cut on the SV info

@@ -186,6 +186,9 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
 
 
 
+
+
+
     // Los objetos de salida
     std::unique_ptr<pat::MuonCollection>      trgmuons_out   ( new pat::MuonCollection );
     std::unique_ptr<pat::MuonCollection>      muons_out      ( new pat::MuonCollection );
@@ -327,10 +330,41 @@ void MuonTriggerSelector::produce(edm::Event& iEvent, const edm::EventSetup& iSe
       // mu.addUserFloat("p_Y", momento.z());
       // mu.addUserFloat("p_T", momento.t());
 
+
       muons_out->emplace_back(mu);
-      muons_out->back().addUserInt("isTriggering", muonIsTrigger[muIdx]);
+      muons_out->back().addUserInt( "isPFMuon", mu.isPFMuon() ? 1 : 0 );
+      muons_out->back().addUserInt( "isGlobalMuon", mu.isGlobalMuon() ? 1 : 0 );
+      muons_out->back().addUserInt( "isTrackerMuon", mu.isTrackerMuon() ? 1 : 0);
+      muons_out->back().addUserInt( "isTriggering", muonIsTrigger[muIdx] );
+      muons_out->back().addUserInt( "isSoft", mu.isSoftMuon(PV) );
 
       trans_muons_out->emplace_back(muonTT);
+
+      try{
+        muons_out->back().addUserInt("pixelLayers", mu.innerTrack()->hitPattern().pixelLayersWithMeasurement());
+      }
+      catch(...){
+        muons_out->back().addUserInt("pixelLayers",-1);
+      }
+      try{
+        muons_out->back().addUserInt("trackerLayers", mu.innerTrack()->hitPattern().trackerLayersWithMeasurement());
+      }
+      catch(...){
+        muons_out->back().addUserInt("trackerLayers",-1);
+      }
+      try{
+        muons_out->back().addUserInt("ValidHits", mu.innerTrack()->numberOfValidHits()) ;
+      }
+      catch(...){
+       muons_out->back().addUserInt("ValidHits", -1);
+      }
+      
+      try{
+        muons_out->back().addUserInt("ValidPixelHits", mu.innerTrack()->hitPattern().numberOfValidPixelHits());
+      }
+      catch(...){
+        muons_out->back().addUserInt("ValidPixelHits", -1);
+      }
 
 
 

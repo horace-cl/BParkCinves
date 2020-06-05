@@ -59,12 +59,23 @@ outputFileNANO = cms.untracked.string('_'.join(['BParkNANO', extension[options.i
 outputFileFEVT = cms.untracked.string('_'.join(['BParkFullEvt', extension[options.isMC], options.tag])+'.root')
 if not options.inputFiles:
 
-	if 'local' in options.tag:
-		options.inputFiles = ['file:/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/input.root']
+	if options.isMC:
+		options.inputFiles = [
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/E5179C93-BFAA-6240-AAE7-A0A4DC410E4C.root',
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/7F92D828-F1D0-2244-8B21-5224B26E974B.root',
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/7B6B1A4D-B9E0-7245-988D-FB7BF863E454.root',
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/79B0D428-E66B-1F4C-B05D-70EA12884B46.root',
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/6EAEE0F7-3D9B-3341-AB81-54CECA85CEC0.root',
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/46BE0C7D-4B50-6F42-8451-418494B481D5.root',
+		'/store/mc/RunIIAutumn18MiniAOD/BuToKMuMu_probefilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/MINIAODSIM/PUPoissonAve20_BParking_102X_upgrade2018_realistic_v15-v2/40000/43F82832-A9A2-5D45-950F-BC7D8DAC9C9B.root',
+		]
+
+	elif 'local' in options.tag:
+		options.inputFiles = ['file:/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/input.root']
+
 	elif 'debug' in options.tag:
 		options.inputFiles = ['file:/afs/cern.ch/user/c/castilla/private/BParking/CMSSW_10_2_15/src/PhysicsTools/BParkingNano/BtoKmm/pickevents.root']
-	elif options.isMC:
-		options.inputFiles = ['/store/cmst3/group/bpark/BToKmumu_1000Events_MINIAOD.root']
+	
 	else:
 		options.inputFiles = [
 		# Bloque  --->  /ParkingBPH4/Run2018B-05May2019-v2/MINIAOD#62e4110e-94d0-4a3b-b8e4-4df4863cd558   <---   con 637K eventos
@@ -220,10 +231,15 @@ process.GlobalTag = GlobalTag(process.GlobalTag, globaltag, '')
 #####################################################################################################
 ################################### PATH, ENDPAT Y SCHEDULE #########################################
 #####################################################################################################
-
 from config_BtoKmumu_cff import *
 
+
 process.nanoAOD_KMuMu_step = cms.Path(nanoSequence  + nanoBKMuMuSequence + CountBToKmumu )
+
+if options.isMC:
+    from PhysicsTools.BParkingNano.nanoBPark_cff import nanoAOD_customizeMC
+    nanoAOD_customizeMC(process)
+
 
 process.endjob_step = cms.EndPath(process.endOfProcess)
 

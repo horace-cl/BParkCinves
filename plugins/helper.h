@@ -16,6 +16,9 @@
 #include <limits>
 #include <memory>
 
+#include "TVector3.h"
+#include "TMatrixD.h"
+
 typedef std::vector<reco::TransientTrack> TransientTrackCollection;
 
 constexpr float K_MASS = 0.493677;
@@ -109,5 +112,104 @@ inline bool track_to_lepton_match(edm::Ptr<reco::Candidate> l_ptr, auto iso_trac
   return false;
 }
 
+
+inline float V0_Lifetime(TVector3 pv, TVector3 sv, TMatrixD EPV, TMatrixD ESV, float M, TVector3 pT, double &ct, double &ect)
+{
+  // NOTA1: Esta funcion calucla el tiempo de vida y su error usando la longitud propia de decaimiento transversal
+  // Recuerde que estamos asumiendo que el error en el pt es despreciable por eso las matrices asociadas a este las definimos cero
+
+  TVector3 svT(sv.X(),sv.Y(),0.0);
+  TVector3 pvT(pv.X(),pv.Y(),0.0);
+  TVector3 d = svT - pvT;
+
+  TMatrixD VSV(2,2);
+  VSV(0,0) = ESV(0,0);
+  VSV(1,1) = ESV(1,1);
+  VSV(1,0) = ESV(1,0);
+  VSV(0,1) = VSV(1,0);
+
+  TMatrixD VPV(2,2);
+  VPV(0,0) = EPV(0,0);
+  VPV(1,1) = EPV(1,1);
+  VPV(1,0) = EPV(1,0);
+  VPV(0,1) = VPV(1,0);
+
+  TMatrixD VL(2,2); VL = VSV; VL+=VPV;
+
+  TVector3 p = pT;
+
+  TMatrixD VP(2,2);
+  VP(0,0) = 0.0;
+  VP(1,1) = 0.0;
+  VP(0,1) = 0.0;
+  VP(1,0) = 0.0;
+
+  double Lxy = d.Dot(p)/p.Mag();
+  double lf = Lxy*M/p.Mag();
+  //cout<<" ---> "<<lf<<endl;
+  ct = lf;
+  
+  //Ahora calaculamos el error en el tiempo de vida
+  
+  //computing Mass error
+  //double sM2 = 0; //We assume 0 for now
+  
+  //computing Lxy error
+  
+  //Defining Matrix:
+  TMatrixD A(2,2);
+  TMatrixD B(2,2);
+  TMatrixD C(2,2);
+  TMatrixD EP(2,2);
+  TMatrixD EL(2,2);
+  
+  //Aij = PiPj/p2
+  //Bij = LiLj/Lxy2 (Li = SVi - PVi)
+  //EPij = Vij(P)/p2
+  //ELij = Vij(L)/Lxy^2;
+  //Cij = LiPj/(pLxy)
+  
+  A(0,0) = p.X()*p.X()/p.Mag2();
+  A(1,1) = p.Y()*p.Y()/p.Mag2();
+  A(0,1) = p.X()*p.Y()/p.Mag2();
+  A(1,0) = A(0,1);
+
+  B(0,0) = d.X()*d.X()/(Lxy*Lxy);
+  B(1,1) = d.Y()*d.Y()/(Lxy*Lxy);
+  B(0,1) = d.X()*d.Y()/(Lxy*Lxy);
+  B(1,0) = B(0,1);
+  
+  C(0,0) = d.X()*p.X()/(Lxy*p.Mag());
+  C(1,1) = d.Y()*p.Y()/(Lxy*p.Mag());
+  C(0,1) = d.X()*p.Y()/(Lxy*p.Mag());
+  C(1,0) = d.Y()*p.X()/(Lxy*p.Mag());
+
+  EP = VP;
+  EP*= ((double)1.0/p.Mag2());
+  EL = VL;
+  EL*= ((double)1.0/(Lxy*Lxy));
+
+  //Test
+  //EL(0,1) = 0.0;
+  //EL(1,0) = 0.0;
+
+  //Calculando Sigma Lxy
+  // Sigma Lxy^2 = Tr{A*EL + (B + 4*A - 4*C)*EP}
+  // NOTA2: en nuestro caso basicamente es Sigma Lxy^2 = Tr{A*EL), dado que no consideramos el momentum P
+  
+  TMatrixD A1 = A;
+  A1*=(double)4.0;
+  A1+=B;
+  TMatrixD C1 = C;
+  C1*=(double)4.0;
+  A1-=C1;
+  
+  TMatrixD A_EL(A,TMatrixD::kMult,EL);
+  TMatrixD A1_EP(A1,TMatrixD::kMult,EP);
+  TMatrixD SL = A_EL;SL+=A1_EP;
+  double sLxy2 = SL(0,0) + SL(1,1); 
+  
+  return ect = (double) fabs(lf)*sqrt(sLxy2);
+}
  
 #endif

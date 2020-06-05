@@ -26,6 +26,9 @@
 #include "KinVtxFitter.h"
 #include <Math/VectorUtil.h>
 
+#include "TVector3.h"
+#include "TMatrixD.h"
+
 #include "RecoVertex/KinematicFitPrimitives/interface/RefCountedKinematicVertex.h"
 #include "DataFormats/Math/interface/deltaR.h"
  
@@ -165,7 +168,8 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
   for(size_t k_idx = 0; k_idx < kaons->size(); ++k_idx) {
     edm::Ptr<pat::CompositeCandidate> k_ptr(kaons, k_idx);
     
-   // std::cout << "K id : " << k_idx << std::endl;
+   // std::cout << "K DCASig : " <<k_ptr->userFloat("DCASig") << std::endl;
+   // std::cout << "K nValidHits : " <<k_ptr->userInt("nValidHits") << std::endl;
     
    // try {
     if( !k_selection_(*k_ptr) ) continue;
@@ -450,7 +454,73 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
 
 
+      TVector3 pv, sv, pT;
+      pT.SetXYZ(fit_p4.px(),fit_p4.py(),0.0);
+      pv.SetXYZ(vx.at(0),vy.at(0),vz.at(0));
+      sv.SetXYZ(cand.vx(),cand.vy(),cand.vz());
+
+      TMatrix ESV(3,3);
+      TMatrix EPV(3,3);
+
+      ESV(0,0) = fitter.fitted_vtx_uncertainty().cxx();
+      ESV(1,1) = fitter.fitted_vtx_uncertainty().cyy();
+      ESV(2,2) = fitter.fitted_vtx_uncertainty().czz();
+      ESV(0,1) = fitter.fitted_vtx_uncertainty().cyx();
+      ESV(0,2) = fitter.fitted_vtx_uncertainty().czx();
+      ESV(1,2) = fitter.fitted_vtx_uncertainty().czy();
+
+      EPV(0,0) = vertexHandle->front().covariance(0,0);
+      EPV(1,1) = vertexHandle->front().covariance(1,1);
+      EPV(2,2) = vertexHandle->front().covariance(2,2);
+      EPV(0,1) = vertexHandle->front().covariance(0,1);
+      EPV(0,2) = vertexHandle->front().covariance(0,2);
+      EPV(1,2) = vertexHandle->front().covariance(1,2);
+
+
+
+      double ct, ect;
+      V0_Lifetime(pv,sv,EPV,ESV, 5.27932, pT, ct, ect);
+
+    
+      
+      cand.addUserFloat("PDL", ct);
+      cand.addUserFloat("ePDL", ect);
+
+
+
+      // VARIABLES DE TABLA DE KAONES 
+      cand.addUserFloat("k_DCASig", k_ptr->userFloat("DCASig") );
+      cand.addUserFloat("k_nValidHits", k_ptr->userInt("nValidHits") );
+      cand.addUserInt("k_isMatchedToMuon", k_ptr->userInt("isMatchedToMuon") );
+      cand.addUserInt("k_isMatchedToLooseMuon", k_ptr->userInt("isMatchedToLooseMuon") );
+      cand.addUserInt("k_isMatchedToSoftMuon", k_ptr->userInt("isMatchedToSoftMuon") );
+      cand.addUserInt("k_isMatchedToMediumMuon", k_ptr->userInt("isMatchedToMediumMuon") );
+      cand.addUserInt("k_isMatchedToEle", k_ptr->userInt("isMatchedToEle") );
+
+
+
+      // VARIABLES DE TABLA DE MUONES
+      // cand.addUserInt("l1_isPFMuon", l1_ptr->userInt("isPFMuon"));
+      // cand.addUserInt("l1_isGlobalMuon", l1_ptr->userInt("isGlobalMuon"));
+      // cand.addUserInt("l1_isTrackerMuon", l1_ptr->userInt("isTrackerMuon"));
+      // cand.addUserInt("l1_isTriggering", l1_ptr->userInt("isTriggering"));
+      // cand.addUserInt("l1_isSoft", l1_ptr->userInt("isSoft"));
+
+      // cand.addUserInt("l2_isPFMuon", l2_ptr->userInt("isPFMuon"));
+      // cand.addUserInt("l2_isGlobalMuon", l2_ptr->userInt("isGlobalMuon"));
+      // cand.addUserInt("l2_isTrackerMuon", l2_ptr->userInt("isTrackerMuon"));
+      // cand.addUserInt("l2_isTriggering", l2_ptr->userInt("isTriggering"));
+      // cand.addUserInt("l2_isSoft", l2_ptr->userInt("isSoft"));
+
+
+
       ret_val->push_back(cand);
+
+
+
+
+
+
     } // for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
   
  //   }
@@ -461,7 +531,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
   } // for(size_t k_idx = 0; k_idx < kaons->size(); ++k_idx)
 
 
- 
+
   for (auto & cand: *ret_val){
     cand.addUserInt("n_k_used", std::count(used_trk_id.begin(),used_trk_id.end(),cand.userInt("k_idx")));
     cand.addUserInt("n_l1_used", std::count(used_lep1_id.begin(),used_lep1_id.end(),cand.userInt("l1_idx"))+std::count(used_lep2_id.begin(),used_lep2_id.end(),cand.userInt("l1_idx")));
