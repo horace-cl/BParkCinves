@@ -41,4 +41,4 @@ Thumbs.db
 BtoKmm/*.root
 BtoKmm/crab_projects/
 BtoKmm/*.txt
-BtoKmm/*crab*
+BtoKmm/*.log
