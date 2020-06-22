@@ -134,6 +134,14 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       }
     }
   }
+  if (dzTrgMu.size()==0){
+       const reco::Vertex & vertex = vertexHandle->front(); 
+       const pat::Muon & trgmu = trgMuons->front();
+        dzTrgMu.push_back(fabs(vertex.position().z()-trgmu.vz()));
+        vx.push_back(vertex.position().x());
+        vy.push_back(vertex.position().y());
+        vz.push_back(vertex.position().z());	
+  }
   // output
   auto pvTable = std::make_unique<nanoaod::FlatTable>(dzTrgMu.size(),"PV",false);
 
@@ -180,6 +188,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       k_ptr->phi(),
       K_MASS
       );
+
 
     for(size_t ll_idx = 0; ll_idx < dileptons->size(); ++ll_idx) {
       
@@ -235,6 +244,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       // cand.addUserFloat("dmuon_vy", ll_prt->vy());
       // cand.addUserFloat("dmuon_vz", ll_prt->vz());
       
+
       if( !pre_vtx_selection_(cand) ) continue;
     
       //HCL
@@ -250,6 +260,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       // RefCountedKinematicVertex myVertex = fitter.fitted_vtx_();
       // std::cout << myVertex->vertexIsValid << "\n\n";
 
+
       if(!fitter.success()) continue; // hardcoded, but do we need otherwise?
       cand.setVertex( 
         reco::Candidate::Point( 
@@ -263,22 +274,21 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       used_lep1_id.emplace_back(l1_idx);
       used_lep2_id.emplace_back(l2_idx);
       used_trk_id.emplace_back(k_idx);
-      cand.addUserInt("sv_OK" , fitter.success());
+      cand.addUserInt("sv_OK" , fitter.success()); 
       cand.addUserFloat("sv_chi2", fitter.chi2());
       cand.addUserFloat("sv_ndof", fitter.dof()); // float??
       cand.addUserFloat("sv_prob", fitter.prob());
+ 
       cand.addUserFloat("fitted_mll" , (fitter.daughter_p4(0) + fitter.daughter_p4(1)).mass());
+      cand.addUserFloat("fitted_pt_ll" , (fitter.daughter_p4(0) + fitter.daughter_p4(1)).pt());
+      cand.addUserFloat("fitted_eta_ll" , (fitter.daughter_p4(0) + fitter.daughter_p4(1)).eta());
+      cand.addUserFloat("fitted_phi_ll" , (fitter.daughter_p4(0) + fitter.daughter_p4(1)).phi());
+      
       auto fit_p4 = fitter.fitted_p4();
       cand.addUserFloat("fitted_pt"  , fit_p4.pt()); 
-
-      cand.addUserFloat("fitted_px"  , fitter.fitted_candidate().globalMomentum().x()); 
-      cand.addUserFloat("fitted_py"  , fitter.fitted_candidate().globalMomentum().y()); 
-      cand.addUserFloat("fitted_pz"  , fitter.fitted_candidate().globalMomentum().z()); 
-      
-      // std::cout << "fitted_px"  << fitter.fitted_candidate().globalMomentum().x() << "\n";
-      // std::cout << "fitted_py"  << fitter.fitted_candidate().globalMomentum().y() << "\n";
-      // std::cout << "fitted_pz"  << fitter.fitted_candidate().globalMomentum().z() << "\n";
-
+      // cand.addUserFloat("fitted_px"  , fitter.fitted_candidate().globalMomentum().x()); 
+      // cand.addUserFloat("fitted_py"  , fitter.fitted_candidate().globalMomentum().y()); 
+      // cand.addUserFloat("fitted_pz"  , fitter.fitted_candidate().globalMomentum().z()); 
       cand.addUserFloat("fitted_eta" , fit_p4.eta());
       cand.addUserFloat("fitted_phi" , fit_p4.phi());
       cand.addUserFloat("fitted_mass", fitter.fitted_candidate().mass());      
@@ -331,6 +341,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("fitted_k_phi" , fitter.daughter_p4(2).phi());
       cand.addUserFloat("k_charge", k_ptr->charge());
       
+
       if( !post_vtx_selection_(cand) ) continue;        
 
       //compute isolation
@@ -377,6 +388,8 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
           if (dr_to_b < 0.3) b_iso03 += trk.pt();
         }
       } 
+
+
       cand.addUserFloat("l1_iso03", l1_iso03);
       cand.addUserFloat("l1_iso04", l1_iso04);
       cand.addUserFloat("l2_iso03", l2_iso03);
@@ -393,18 +406,21 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
       // Aqui creemos el boost al CM del dilepton
       math::XYZTLorentzVector dilep = ll_prt->p4();
-      
       ROOT::Math::Boost cmboost(dilep.BoostToCM());
+
       math::XYZTLorentzVector kaonCM(  cmboost( k_ptr->p4() )  );
       math::XYZTLorentzVector muonCM1, muonCM2;
-      if (l1_ptr->charge()==-1){
-        muonCM1 = cmboost(l1_ptr->p4()) ;
-        muonCM2 = cmboost(l2_ptr->p4()) ;
+
+      //where the thetal is the angle between the
+      //direction of the m-(m+) lepton and the K+(K-)
+      if (l1_ptr->charge()==k_ptr->charge()){
+        muonCM1 = cmboost(fitter.daughter_p4(1)) ;
+        muonCM2 = cmboost(fitter.daughter_p4(0)) ;
       }
       else {
-        muonCM1 = cmboost(l2_ptr->p4()) ;
-        muonCM2 = cmboost(l1_ptr->p4()) ;
-      } 
+        muonCM1 = cmboost(fitter.daughter_p4(0)) ;
+        muonCM2 = cmboost(fitter.daughter_p4(1)) ;
+              } 
 
       float costhetaL = ( muonCM1.x()*muonCM2.x() 
                          + muonCM1.y()*muonCM2.y() 
@@ -452,12 +468,13 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("significance1", lxy_pv[1]/errP[1]);
       cand.addUserFloat("significance2", lxy_pv[2]/errP[2]);
 
-
+      
 
       TVector3 pv, sv, pT;
       pT.SetXYZ(fit_p4.px(),fit_p4.py(),0.0);
       pv.SetXYZ(vx.at(0),vy.at(0),vz.at(0));
       sv.SetXYZ(cand.vx(),cand.vy(),cand.vz());
+
 
       TMatrix ESV(3,3);
       TMatrix EPV(3,3);
@@ -468,7 +485,7 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       ESV(0,1) = fitter.fitted_vtx_uncertainty().cyx();
       ESV(0,2) = fitter.fitted_vtx_uncertainty().czx();
       ESV(1,2) = fitter.fitted_vtx_uncertainty().czy();
-
+       
       EPV(0,0) = vertexHandle->front().covariance(0,0);
       EPV(1,1) = vertexHandle->front().covariance(1,1);
       EPV(2,2) = vertexHandle->front().covariance(2,2);
@@ -481,7 +498,6 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       double ct, ect;
       V0_Lifetime(pv,sv,EPV,ESV, 5.27932, pT, ct, ect);
 
-    
       
       cand.addUserFloat("PDL", ct);
       cand.addUserFloat("ePDL", ect);
@@ -495,10 +511,20 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserInt("k_isMatchedToLooseMuon", k_ptr->userInt("isMatchedToLooseMuon") );
       cand.addUserInt("k_isMatchedToSoftMuon", k_ptr->userInt("isMatchedToSoftMuon") );
       cand.addUserInt("k_isMatchedToMediumMuon", k_ptr->userInt("isMatchedToMediumMuon") );
-      cand.addUserInt("k_isMatchedToEle", k_ptr->userInt("isMatchedToEle") );
+      cand.addUserInt("k_isMatchedToEle", k_ptr->userInt("isMatchedToEle") ); 
 
+      cand.addUserInt("k_HighPurity", k_ptr->userInt("trackHighPurity") ); 
+      cand.addUserInt("k_numberOfHits", k_ptr->userInt("numberOfHits") ); 
+      cand.addUserInt("k_numberOfPixelHits", k_ptr->userInt("numberOfPixelHits") ); 
+      cand.addUserInt("k_lostInnerHits", k_ptr->userInt("lostInnerHits") ); 
 
+      // std::cout<<"\nBToKMMBuilder\n-------------\ntrackHighPurity  " << k_ptr->userInt("trackHighPurity") << "\n";
+      // std::cout<<"numberOfHits  " << k_ptr->userInt("numberOfHits") << "\n";
+      // std::cout<<"numberOfPixelHits  " << k_ptr->userInt("numberOfPixelHits") << "\n";
+      // std::cout<<"lostInnerHits  " << k_ptr->userInt("lostInnerHits") << "\n";
+      // std::cout << "------------\n\n";
 
+ 
       // VARIABLES DE TABLA DE MUONES
       // cand.addUserInt("l1_isPFMuon", l1_ptr->userInt("isPFMuon"));
       // cand.addUserInt("l1_isGlobalMuon", l1_ptr->userInt("isGlobalMuon"));
@@ -515,8 +541,6 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
 
       ret_val->push_back(cand);
-
-
 
 
 

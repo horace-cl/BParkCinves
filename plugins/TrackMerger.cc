@@ -258,6 +258,17 @@ void TrackMerger::produce(edm::StreamID, edm::Event &evt, edm::EventSetup const 
     pcand.addUserInt("isMatchedToMediumMuon", matchedToMediumMuon);
     pcand.addUserInt("isMatchedToEle", matchedToEle);
     pcand.addUserInt("nValidHits", trk.bestTrack()->found());
+    pcand.addUserInt("trackHighPurity", trk.trackHighPurity() ? 1 : 0);
+    pcand.addUserInt("numberOfHits",trk.numberOfHits());
+    pcand.addUserInt("numberOfPixelHits",trk.numberOfPixelHits());
+    pcand.addUserInt("lostInnerHits", trk.lostInnerHits());
+
+    // std::cout<<"\nTRACK MERGER\n-------------\ntrackHighPurity  " << trk.trackHighPurity() << "\n";
+    // std::cout<<"numberOfHits  " << trk.numberOfHits() << "\n";
+    // std::cout<<"numberOfPixelHits  " << trk.numberOfPixelHits() << "\n";
+    // std::cout<<"lostInnerHits  " << trk.lostInnerHits() << "\n";
+    // std::cout << "------------\n\n";
+
     //adding the candidate in the composite stuff for fit (need to test)
     if ( iTrk < nTracks )
       pcand.addUserCand( "cand", edm::Ptr<pat::PackedCandidate> ( tracks, iTrk ));

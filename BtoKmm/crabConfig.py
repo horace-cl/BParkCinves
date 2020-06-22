@@ -5,7 +5,7 @@ config=config()
 #A name the user gives to it's request/task. 
 #In particular, it is used by CRAB to create a project directory 
 #(named crab_<requestName>) 
-config.General.requestName = 'Bplus_parkedData_20-05-24_D1'
+config.General.requestName = 'D1_Bplus_parkedData_20-06-19'
 
 #The area (full or relative path) where to create the CRAB project directory.
 config.General.workArea = 'crab_projects'
@@ -38,7 +38,12 @@ config.JobType.allowUndistributedCMSSW = True
 
 
 #config.Data.inputDataset = '/ParkingBPH4/Run2018B-05May2019-v2/MINIAOD'
-config.Data.inputDataset = '/ParkingBPH1/Run2018D-05May2019promptD-v1/MINIAOD' #1619434372 events
+config.Data.inputDataset = '/ParkingBPH1/Run2018D-05May2019promptD-v1/MINIAOD' #1619434372 events    37458 files
+# config.Data.inputDataset = '/ParkingBPH2/Run2018D-05May2019promptD-v1/MINIAOD' #1628977938           38142
+# config.Data.inputDataset = '/ParkingBPH3/Run2018D-05May2019promptD-v1/MINIAOD' #1627305004           38109  
+# config.Data.inputDataset = '/ParkingBPH4/Run2018D-05May2019promptD-v1/MINIAOD' #1625496246           38479
+# config.Data.inputDataset = '/ParkingBPH5/Run2018D-05May2019promptD-v1/MINIAOD' #1628016946           38413
+
 config.Data.inputDBS = 'global'
 config.Data.splitting ='LumiBased'
 config.Data.unitsPerJob = 100

@@ -70,7 +70,7 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     doc  = cms.string("slimmedMuons for BPark after basic selection"),
     singleton = cms.bool(False), # the number of entries is variable
     extension = cms.bool(False), # this is the main table for the muons
-    variables = cms.PSet(CandVars,
+    variables = cms.PSet(#CandVars,
         # pt = Var("pt()", float, doc='transverse momentum', precision=6),
         # ptErr   = Var("bestTrack().ptError()", float, doc = "ptError of the muon track", precision=6),
         # dz = Var("dB('PVDZ')",float,doc="dz (with sign) wrt first PV, in cm",precision=10),
@@ -83,7 +83,7 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
         # px = Var("px()",float,doc="x momentum",precision=6),
         # py = Var("py()",float,doc="y momentum",precision=6),
         # pz = Var("pz()",float,doc="z momentum",precision=6),
-        energy = Var("energy()", float, doc = "energy of the muon", precision=6),
+        #energy = Var("energy()", float, doc = "energy of the muon", precision=6),
         # ip3d = Var("abs(dB('PV3D'))",float,doc="3D impact parameter wrt first PV, in cm",precision=10),
         # sip3d = Var("abs(dB('PV3D')/edB('PV3D'))",float,doc="3D impact parameter significance wrt first PV",precision=10),
         # segmentComp  = Var("segm entCompatibility()", float, doc = "muon segment compatibility", precision=14), # keep higher precision since people have cuts with 3 digits on this
@@ -321,7 +321,7 @@ BToKmumuTableOriginal = cms.EDProducer(
         CandVars,
         l1Idx = uint('l1_idx'),
         l2Idx = uint('l2_idx'),
-        kIdx = uint('k_idx'),
+        #kIdx = uint('k_idx'),
         minDR = ufloat('min_dr'),
         maxDR = ufloat('max_dr'),
         # fit and vtx info
@@ -349,23 +349,31 @@ BToKmumuTableOriginal = cms.EDProducer(
         fit_pt = ufloat('fitted_pt'),
         fit_eta = ufloat('fitted_eta'),
         fit_phi = ufloat('fitted_phi'),
+
         fit_l1_pt = ufloat('fitted_l1_pt'),
         fit_l1_eta = ufloat('fitted_l1_eta'),
         fit_l1_phi = ufloat('fitted_l1_phi'),
+        
         fit_l2_pt = ufloat('fitted_l2_pt'),
         fit_l2_eta = ufloat('fitted_l2_eta'),
         fit_l2_phi = ufloat('fitted_l2_phi'),
+        
         fit_k_pt = ufloat('fitted_k_pt'),
         fit_k_eta = ufloat('fitted_k_eta'),
         fit_k_phi = ufloat('fitted_k_phi'),
+        
         l1_iso03 = ufloat('l1_iso03'),
         l1_iso04 = ufloat('l1_iso04'),
+        
         l2_iso03 = ufloat('l2_iso03'),
         l2_iso04 = ufloat('l2_iso04'),
+        
         k_iso03  = ufloat('k_iso03'),
         k_iso04  = ufloat('k_iso04'),
+        
         b_iso03  = ufloat('b_iso03'),
         b_iso04  = ufloat('b_iso04'),
+        
         n_k_used = uint('n_k_used'),
         n_l1_used = uint('n_l1_used'),
         n_l2_used = uint('n_l2_used'),
@@ -385,13 +393,13 @@ BToKmumuTable = cms.EDProducer(
         CandVars,
         l1Idx = uint('l1_idx'),
         l2Idx = uint('l2_idx'),
-        kIdx = uint('k_idx'),
+        # kIdx = uint('k_idx'),
         # minDR = ufloat('min_dr'),
         # maxDR = ufloat('max_dr'),
-        dr_l1 = ufloat('dr_l1'),
-        dr_l2 = ufloat('dr_l2'),
-        dz_l1 = ufloat('dz_l1'),
-        dz_l2 = ufloat('dz_l2'),
+        # dr_l1 = ufloat('dr_l1'),
+        # dr_l2 = ufloat('dr_l2'),
+        # dz_l1 = ufloat('dz_l1'),
+        # dz_l2 = ufloat('dz_l2'),
         # #HCL
         # l1Vx = ufloat("l1_vx"),
         # l1Vy = ufloat("l1_vy"),
@@ -406,7 +414,7 @@ BToKmumuTable = cms.EDProducer(
         # dmuonVy = ufloat("dmuon_vy"),
         # dmuonVz = ufloat("dmuon_vz"),
         # fit and vtx info
-        #chi2 = ufloat('sv_chi2'),
+        chi2 = ufloat('sv_chi2'),
         svprob = ufloat('sv_prob'),
         l_xy = ufloat('l_xy'),
         l_xy_unc = ufloat('l_xy_unc'),
@@ -419,26 +427,27 @@ BToKmumuTable = cms.EDProducer(
         vtx_ey = ufloat('vtx_ey'),
         vtx_ez = ufloat('vtx_ez'),
         #vtx_exy = ufloat('vtx_exy'),
-        vtx_eyx = ufloat('vtx_eyx'),
-        vtx_ezy = ufloat('vtx_ezy'),
-        vtx_ezx = ufloat('vtx_ezx'),
+        # vtx_eyx = ufloat('vtx_eyx'),
+        # vtx_ezy = ufloat('vtx_ezy'),
+        # vtx_ezx = ufloat('vtx_ezx'),
 
         # Mll
         mll_raw = Var('userCand("dilepton").mass()', float),
         mll_llfit = Var('userCand("dilepton").userFloat("fitted_mass")', float), # this might not work
         mllErr_llfit = Var('userCand("dilepton").userFloat("fitted_massErr")', float), # this might not work
+        mll_pt = ufloat("fitted_pt_ll"),
+        mll_eta = ufloat("fitted_eta_ll"),
+        mll_phi = ufloat("fitted_phi_ll"),
+        
+
         # mll_fullfit = ufloat('fitted_mll'),
         # Cos(theta)
         cos2D = ufloat('cos_theta_2D'),
         fit_cos2D = ufloat('fitted_cos_theta_2D'),
+
         # post-fit momentum
         fit_mass = ufloat('fitted_mass'),
         fit_massErr = ufloat('fitted_massErr'),
-
-        fit_px = ufloat('fitted_px'),
-        fit_py = ufloat('fitted_py'),
-        fit_pz = ufloat('fitted_pz'),
-
         fit_pt = ufloat('fitted_pt'),
         fit_eta = ufloat('fitted_eta'),
         fit_phi = ufloat('fitted_phi'),
@@ -470,7 +479,7 @@ BToKmumuTable = cms.EDProducer(
         # n_l1_used = uint('n_l1_used'),
         # n_l2_used = uint('n_l2_used'),
         # cosThetaMuMu = ufloat("cosTheta_mm"),
-        # cosThetaKMu = ufloat("cosTheta_km"),
+        cosThetaKMu = ufloat("cosTheta_km"),
 
         cosAlpha_0 = ufloat("cosAlpha0"),
         cosAlpha_1 = ufloat("cosAlpha1"),
@@ -493,18 +502,12 @@ BToKmumuTable = cms.EDProducer(
         k_matchLooseMuon = uint("k_isMatchedToLooseMuon"),
         k_matchSoftMuon = uint("k_isMatchedToSoftMuon"),
         k_matchMediumMuon = uint("k_isMatchedToMediumMuon"),
-    
-        # l1_isPFMuon = uint("l1_isPFMuon"),
-        # l1_isGlobalMuon = uint("l1_isGlobalMuon"),
-        # l1_isTrackerMuon = uint("l1_isTrackerMuon"),
-        # l1_isTriggering = uint("l1_isTriggering"),
-        # l1_isSoft = uint("l1_isSoft"),
 
-        # l2_isPFMuon = uint("l2_isPFMuon"),
-        # l2_isGlobalMuon = uint("l2_isGlobalMuon"),
-        # l2_isTrackerMuon = uint("l2_isTrackerMuon"),
-        # l2_isTriggering = uint("l2_isTriggering"),
-        # l2_isSoft = uint("l2_isSoft"),
+
+        k_HighPurity = uint("k_HighPurity"),
+        k_numberOfHits = uint("k_numberOfHits"),
+        k_numberOfPixelHits = uint("k_numberOfPixelHits"),
+        k_lostInnerHits = uint("k_lostInnerHits"),
 
     )
 )
@@ -517,7 +520,7 @@ CountBToKmumu = cms.EDFilter("PATCandViewCountFilter",
 
 
 BToKMuMuSequence = cms.Sequence(
-    (muonPairsForKmumu * countDimuons * diMuTable * BToKmumu)
+    (muonPairsForKmumu * countDimuons * BToKmumu) #diMuTable * 
 )
 
 
@@ -567,7 +570,7 @@ nanoSequence = cms.Sequence(# Original
                             muonBParkSequence + muonBParkTables +#muonTriggerMatchedTables +
                             
                             # # customizeTrackFilteredBPark
-                            tracksBParkSequence + tracksBParkTables
+                            tracksBParkSequence #+ tracksBParkTables
 
                             # #customizeTriggerBitsBPark
                             #trgTables 
