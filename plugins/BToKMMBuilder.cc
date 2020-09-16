@@ -121,6 +121,13 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
 
   std::vector<float> vx,vy,vz, dzTrgMu;// ,dlenSig,pAngle;
 
+  const reco::Vertex & vertex = vertexHandle->front(); 
+  const pat::Muon & trgmu = trgMuons->front();
+  dzTrgMu.push_back(fabs(vertex.position().z()-trgmu.vz()));
+  vx.push_back(vertex.position().x());
+  vy.push_back(vertex.position().y());
+  vz.push_back(vertex.position().z());  
+  
   int nv = 0;
   for (const reco::Vertex & vertex : *vertexHandle){
     for (const pat::Muon & trgmu : *trgMuons){
@@ -134,14 +141,14 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       }
     }
   }
-  if (dzTrgMu.size()==0){
-       const reco::Vertex & vertex = vertexHandle->front(); 
-       const pat::Muon & trgmu = trgMuons->front();
-        dzTrgMu.push_back(fabs(vertex.position().z()-trgmu.vz()));
-        vx.push_back(vertex.position().x());
-        vy.push_back(vertex.position().y());
-        vz.push_back(vertex.position().z());	
-  }
+  // if (dzTrgMu.size()==0){
+  //      const reco::Vertex & vertex = vertexHandle->front(); 
+  //      const pat::Muon & trgmu = trgMuons->front();
+  //       dzTrgMu.push_back(fabs(vertex.position().z()-trgmu.vz()));
+  //       vx.push_back(vertex.position().x());
+  //       vy.push_back(vertex.position().y());
+  //       vz.push_back(vertex.position().z());	
+  // }
   // output
   auto pvTable = std::make_unique<nanoaod::FlatTable>(dzTrgMu.size(),"PV",false);
 
@@ -434,9 +441,9 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("cosTheta_km", costhetaKL);
 
 
-      std::vector<float> cosAlpha(3, -2);
-      std::vector<float> lxy_pv(3,-1);
-      std::vector<float> errP(3,-1);
+      std::vector<float> cosAlpha(4, -2);
+      std::vector<float> lxy_pv(4,-1);
+      std::vector<float> errP(4,-1);
 
       // CHEQUEMOS QUE EL CANDIDATO A "B" SATIFAGA LOS CORTES EN COS(ALPHA) Y SIGNIFICANCIA
       for( unsigned int iPV=0; iPV<dzTrgMu.size(); ++iPV ){ 
@@ -459,15 +466,17 @@ void BToKMMBuilder::produce(edm::StreamID, edm::Event &evt, edm::EventSetup cons
       cand.addUserFloat("cosAlpha0", cosAlpha[0]);
       cand.addUserFloat("cosAlpha1", cosAlpha[1]);
       cand.addUserFloat("cosAlpha2", cosAlpha[2]);
+      cand.addUserFloat("cosAlpha3", cosAlpha[3]);
 
       cand.addUserFloat("lxy_pv0", lxy_pv[0]);
       cand.addUserFloat("lxy_pv1", lxy_pv[1]);
       cand.addUserFloat("lxy_pv2", lxy_pv[2]);
+      cand.addUserFloat("lxy_pv3", lxy_pv[3]);
 
       cand.addUserFloat("significance0", lxy_pv[0]/errP[0]);
       cand.addUserFloat("significance1", lxy_pv[1]/errP[1]);
       cand.addUserFloat("significance2", lxy_pv[2]/errP[2]);
-
+      cand.addUserFloat("significance3", lxy_pv[3]/errP[3]);
       
 
       TVector3 pv, sv, pT;

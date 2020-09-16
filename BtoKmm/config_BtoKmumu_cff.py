@@ -484,14 +484,17 @@ BToKmumuTable = cms.EDProducer(
         cosAlpha_0 = ufloat("cosAlpha0"),
         cosAlpha_1 = ufloat("cosAlpha1"),
         cosAlpha_2 = ufloat("cosAlpha2"),
+        cosAlpha_3 = ufloat("cosAlpha3"),
 
         lxy_pv0 = ufloat("lxy_pv0"),
         lxy_pv1 = ufloat("lxy_pv1"),
         lxy_pv2 = ufloat("lxy_pv2"),
+        lxy_pv3 = ufloat("lxy_pv3"),
 
         significance0 = ufloat("significance0"),
         significance1 = ufloat("significance1"),
         significance2 = ufloat("significance2"),
+        significance3 = ufloat("significance3"),
  
         PDL = ufloat("PDL"),
         ePDL = ufloat("ePDL"),
