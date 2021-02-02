@@ -15,6 +15,7 @@ options.register('isMC', True,
 options.register('globalTag', 'NOTSET',
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
+    
     "Set global tag"
 )
 options.register('wantSummary', True,
@@ -247,6 +248,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, globaltag, '')
 from config_BtoKmumu_cff import *
 
 
+process.nanoAOD_KMuMu_step = cms.Path(nanoSequence  + nanoBKMuMuSequence + CountBToKmumu )
 process.nanoAOD_KMuMu_step = cms.Path(nanoSequence  + nanoBKMuMuSequence + CountBToKmumu )
 
 #if options.isMC:

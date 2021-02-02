@@ -70,7 +70,7 @@ muonBParkTable = cms.EDProducer("SimpleCandidateFlatTableProducer",
     doc  = cms.string("slimmedMuons for BPark after basic selection"),
     singleton = cms.bool(False), # the number of entries is variable
     extension = cms.bool(False), # this is the main table for the muons
-    variables = cms.PSet(CandVars,
+    variables = cms.PSet(CandVars, 
         # pt = Var("pt()", float, doc='transverse momentum', precision=6),
         # ptErr   = Var("bestTrack().ptError()", float, doc = "ptError of the muon track", precision=6),
         # dz = Var("dB('PVDZ')",float,doc="dz (with sign) wrt first PV, in cm",precision=10),
@@ -568,6 +568,7 @@ nanoSequence = cms.Sequence(# Original
                             
                             # # customizeTrackFilteredBPark
                             tracksBParkSequence + tracksBParkTables
+                            
 
                             # #customizeTriggerBitsBPark
                             #trgTables 

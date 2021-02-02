@@ -31,25 +31,26 @@ class CandMCMatchTableProducerBPark : public edm::global::EDProducer<> {
             else if (type == "Other") type_ = MOther;
             else throw cms::Exception("Configuration", "Unsupported objType '"+type+"'\n");
     
-	    std::cout << "type = " << type << std::endl;
+            std::cout << "type = " << type << std::endl;
             switch(type_) { 
                 case MMuon: flavDoc_ = "1 = prompt muon (including gamma*->mu mu), 15 = muon from prompt tau, " // continues below
 		                       "511 = from B0, 521 = from B+/-, 0 = unknown or unmatched"; break;
 
-	        case MElectron: flavDoc_ = "1 = prompt electron (including gamma*->mu mu), 15 = electron from prompt tau, " // continues below 
+                case MElectron: flavDoc_ = "1 = prompt electron (including gamma*->mu mu), 15 = electron from prompt tau, " // continues below 
 		                           "22 = prompt photon (likely conversion), " // continues below
 		                           "511 = from B0, 521 = from B+/-, 0 = unknown or unmatched"; break;
                 case MPhoton: flavDoc_ = "1 = prompt photon, 13 = prompt electron, 0 = unknown or unmatched"; break;
                 case MTau: flavDoc_    = "1 = prompt electron, 2 = prompt muon, 3 = tau->e decay, 4 = tau->mu decay, 5 = hadronic tau decay, 0 = unknown or unmatched"; break;
-	        case MTrack: flavDoc_  = "1 = prompt, 511 = from B0, 521 = from B+/-, 0 = unknown or unmatched"; break;
+                case MTrack: flavDoc_  = "1 = prompt, 511 = from B0, 521 = from B+/-, 0 = unknown or unmatched"; break;
 
                 case MOther: flavDoc_  = "1 = from hard scatter, 0 = unknown or unmatched"; break;
             }
 
-	    if ( type_ == MTau ) {
-	      candMapVisTau_ = consumes<edm::Association<reco::GenParticleCollection>>(params.getParameter<edm::InputTag>("mcMapVisTau"));
-	    }
+            if ( type_ == MTau ) {
+                candMapVisTau_ = consumes<edm::Association<reco::GenParticleCollection>>(params.getParameter<edm::InputTag>("mcMapVisTau"));
+            }
         }
+
 
         ~CandMCMatchTableProducerBPark() override {}
 
@@ -64,22 +65,23 @@ class CandMCMatchTableProducerBPark : public edm::global::EDProducer<> {
             edm::Handle<edm::Association<reco::GenParticleCollection>> map;
             iEvent.getByToken(candMap_, map);
 
-	    edm::Handle<edm::Association<reco::GenParticleCollection>> mapVisTau;
-	    if ( type_ == MTau ) {
-	      iEvent.getByToken(candMapVisTau_, mapVisTau);
-	    }
+            edm::Handle<edm::Association<reco::GenParticleCollection>> mapVisTau;
+            if ( type_ == MTau ) {
+                iEvent.getByToken(candMapVisTau_, mapVisTau);
+            }
 
             std::vector<int> key(ncand, -1), flav(ncand, 0);
             for (unsigned int i = 0; i < ncand; ++i) {
-	      //std::cout << "cand #" << i << ": pT = " << cands->ptrAt(i)->pt() << ", eta = " << cands->ptrAt(i)->eta() << ", phi = " << cands->ptrAt(i)->phi() << std::endl;
+                //std::cout << "cand #" << i << ": pT = " << cands->ptrAt(i)->pt() << ", eta = " << cands->ptrAt(i)->eta() << ", phi = " << cands->ptrAt(i)->phi() << std::endl;
                 reco::GenParticleRef match = (*map)[cands->ptrAt(i)];
-		reco::GenParticleRef matchVisTau;
-		if ( type_ == MTau ) {
-		  matchVisTau = (*mapVisTau)[cands->ptrAt(i)];
-		}
+                rticleRef matchVisTau;
+                if ( type_ == MTau ) {
+                    matchVisTau = (*mapVisTau)[cands->ptrAt(i)];
+                }
                 if      ( match.isNonnull()       ) key[i] = match.key();
-		else if ( matchVisTau.isNonnull() ) key[i] = matchVisTau.key();
-		else continue;
+                else if ( matchVisTau.isNonnull() ) key[i] = matchVisTau.key();
+                else continue;
+                
                 switch(type_) {
                     case MMuon:		        
                         if (match->isPromptFinalState()) flav[i] = 1; // prompt
@@ -93,26 +95,26 @@ class CandMCMatchTableProducerBPark : public edm::global::EDProducer<> {
                         if (match->isPromptFinalState()) flav[i] = (match->pdgId() == 22 ? 1 : 13); // prompt electron or photon
                         break;
                     case MTau:
-		        // CV: assignment of status codes according to https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2016#MC_Matching
-		        if      ( match.isNonnull() && match->statusFlags().isPrompt()                  && abs(match->pdgId()) == 11 ) flav[i] = 1;
+                        // CV: assignment of status codes according to https://twiki.cern.ch/twiki/bin/viewauth/CMS/HiggsToTauTauWorking2016#MC_Matching
+                        if      ( match.isNonnull() && match->statusFlags().isPrompt()                  && abs(match->pdgId()) == 11 ) flav[i] = 1;
                         else if ( match.isNonnull() && match->statusFlags().isPrompt()                  && abs(match->pdgId()) == 13 ) flav[i] = 2;
-			else if ( match.isNonnull() && match->isDirectPromptTauDecayProductFinalState() && abs(match->pdgId()) == 11 ) flav[i] = 3;
-			else if ( match.isNonnull() && match->isDirectPromptTauDecayProductFinalState() && abs(match->pdgId()) == 13 ) flav[i] = 4;
-			else if ( matchVisTau.isNonnull()                                                                            ) flav[i] = 5;
+                        else if ( match.isNonnull() && match->isDirectPromptTauDecayProductFinalState() && abs(match->pdgId()) == 11 ) flav[i] = 3;
+                        else if ( match.isNonnull() && match->isDirectPromptTauDecayProductFinalState() && abs(match->pdgId()) == 13 ) flav[i] = 4;
+                        else if ( matchVisTau.isNonnull()                                                                            ) flav[i] = 5;
                         break;
-		    case MTrack:
-		        if (match->isPromptFinalState()) flav[i] = 1; //prompt
-			else flav[i] = getParentHadronFlag(match); // pdgId of mother
-			break;
+                    case MTrack:
+                        if (match->isPromptFinalState()) flav[i] = 1; //prompt
+                        else flav[i] = getParentHadronFlag(match); // pdgId of mother
+                        break;
                     default:
                         flav[i] = match->statusFlags().fromHardProcess();
                 };
             }    
             
             tab->addColumn<int>(branchName_+"Idx",  key, "Index into genParticle list for "+doc_, nanoaod::FlatTable::IntColumn);
-	    //for(auto ij : flav) std::cout << " flav = " << ij << " " << (uint8_t)ij << std::endl;
+            //for(auto ij : flav) std::cout << " flav = " << ij << " " << (uint8_t)ij << std::endl;
             //tab->addColumn<uint8_t>(branchName_+"Flav", flav, "Flavour of genParticle for "+doc_+": "+flavDoc_, nanoaod::FlatTable::UInt8Column);
-	    tab->addColumn<int>(branchName_+"Flav", flav, "Flavour of genParticle for "+doc_+": "+flavDoc_, nanoaod::FlatTable::IntColumn);
+            tab->addColumn<int>(branchName_+"Flav", flav, "Flavour of genParticle for "+doc_+": "+flavDoc_, nanoaod::FlatTable::IntColumn);
 
             iEvent.put(std::move(tab));
         }
